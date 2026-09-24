@@ -1,6 +1,6 @@
 # Wasselne — Phase 0 Register: Reconciled Scope, Decisions, and Open Items
 
-**Status:** Draft for owner approval (Phase 0). Revision 2: owner answers of 2026-09-24 recorded. Not a design approval, not implementation.
+**Status:** **Approved by owner, 2026-09-24.** Revision 6. Not a design approval, not implementation.
 **Date:** 2026-09-24
 **Sources:** BRS Word ed. 0.2, HLD Word ed. 0.2, LLD Word ed. 0.2, Architecture Diagrams Word ed. 0.2 (all dated 23 Sep 2026), and the owner's implementation prompt (`Documents/prompt-for-app.md`).
 
@@ -35,6 +35,9 @@ This register does not repeat the BRS/HLD/LLD. It records what is authoritative,
 | C-05 | LLD and diagrams remain drafts, yet BRS/HLD traceability cites them. | Acceptable. LLD review and freeze happens in Phase 2. |
 | C-06 | The kiosk is "confirmed responsiveness", but its use case, hardware, and session model are undefined (OD-14). Driver GPS on kiosk is impossible. | **Resolved (D-13):** kiosk is future scope. |
 | C-07 | Emergency numbers, SOS staffing, and trusted-contact channel are undefined (OD-09). HLD says no alert type may be enabled without a staffed exercise. | **Resolved (D-17):** SOS opens a chat with a support agent, who calls the user. |
+| C-08 | Owner references Uber-style "behavioral modeling" (price based on a rider's willingness to pay). This is personalized pricing: it needs rider history that won't exist at launch, raises fairness and consumer-law questions in Lebanon, and conflicts with BR-16 (rider and driver see the same fare). | Deferred (D-27). Not in the first release. Revisit with data and legal review. |
+| C-09 | Owner says money "comes to the app and the app pays the drivers", and mentions a failed payment falling back to cash. D-05 (approved) says cash is the only enabled method, so the driver holds the money and cannot "fail". Platform collection also needs a payment provider and Lebanese legal review. | **Resolved (D-38):** all non-cash methods exist in the CMS but stay disabled; only cash is enabled at launch. |
+| C-10 | Owner wants admins to see all rides and all chats. HLD §3 and §6 say staff see only what a case needs. | Owner decision wins (D-33). Access is limited to a specific admin permission, every view is audited, and the privacy policy tells users chats may be reviewed. |
 
 No conflict found in the core dispatch rule: one outstanding offer per ride, including PENDING_ACK; 3-second window starts at authenticated app ACK; separate ACK timeout; terminal old offer before next; fresh reoffer to a previous driver is a new offer ID. BRS, HLD, LLD, diagrams, and prompt agree.
 
@@ -59,18 +62,46 @@ No conflict found in the core dispatch rule: one outstanding offer per ride, inc
 | D-12 | Bus service is future scope. No bus flows in the first release. | Owner, 2026-09-24 (Q1) | Approved |
 | D-13 | Kiosk is future scope. First release targets phones and tablets. | Owner, 2026-09-24 (Q2) | Approved |
 | D-14 | Launch areas and categories are chosen by the owner in the CMS. Nothing is hard-coded. The admin console must let staff draw, publish, and deactivate zones and enable categories per zone. | Owner, 2026-09-24 (Q3) | Approved |
-| D-15 | Fare is computed from CMS parameters: distance (km), per-km rate, road time, and a CMS factor. Each tariff is published per currency. The CMS can publish USD only, LBP only, or both at the same time. No automatic exchange-rate conversion. A CMS parameter decides whether the agreed fare is fixed at request or recalculated from actual distance and time at completion. | Owner, 2026-09-24 (Q4, Q5) | Approved in principle; formula shape needs confirmation (F-1, F-2) |
-| D-16 | No commission is charged per trip at launch. Every trip and cash record is kept so commission can be calculated per driver on a periodic pay day. | Owner, 2026-09-24 (Q6) | Approved; rule timing F-4 |
-| D-17 | SOS at launch opens a priority chat with a Wasselne support agent. The agent then phones the user. The app reports only what actually happened, such as "request sent" or "agent joined". It never claims a call happened. | Owner, 2026-09-24 (Q7) | Approved; staffing gap F-5 |
+| D-15 | **Upfront pricing.** Rider price = (base fare + km-rate × planned-route km + minute-rate × predicted minutes) × surge multiplier + add-ons − discount, then minimum fare and rounding. Route km and minutes come from the map provider's traffic-aware route. Every component is set in the CMS per category, zone, and currency. The quote is the agreed fare unless the CMS fare mode says "recalculate at completion", in which case the final fare is capped by a CMS cap (D-20). | Owner, 2026-09-24 (Q4, Q5, F-1) | Approved |
+| D-16 | **Driver payout and commission.** Driver payout = fare − platform commission. Commission percentage is set in the CMS per category and zone and may be 0% at launch. Because riders pay cash to the driver, commission owed is recorded on every trip and settled per driver on pay day. | Owner, 2026-09-24 (Q6, F-4) | Approved; pay-day rules F-4 |
+| D-17 | SOS at launch opens a priority chat with a Wasselne support agent. The agent then phones the user. The app reports only what actually happened, such as "request sent" or "agent joined". It never claims a call happened. | Owner, 2026-09-24 (Q7) | Approved |
 
 ---
+| D-18 | Sign-in: phone number + SMS code for riders and drivers. Admins use email, password, and an authenticator app. | Owner, 2026-09-24 (Q8) | Approved |
+| D-19 | When both currencies are published, rider and driver see both amounts. The rider may pay in either. The driver records which currency and amount was collected. | Owner, 2026-09-24 (F-2) | Approved |
+| D-20 | In recalculation mode, the final fare may exceed the quote only up to a CMS-set cap. | Owner, 2026-09-24 (F-3) | Approved |
+| D-21 | If SOS is pressed and no agent is online, the app shows the CMS-configured emergency number to dial and on-call staff are alerted. | Owner, 2026-09-24 (F-5) | Approved |
+| D-22 | **Legal documents in CMS.** Admins publish terms and conditions and policies (privacy, cancellation, etc.) per language, as versions. Users accept the current version at sign-up. A new version can require re-acceptance. Every acceptance is recorded with version and time. | Owner, 2026-09-24 | Approved (new) |
+| D-23 | **Discounts in CMS.** Two kinds: promo codes entered by the rider, and automatic category discounts (e.g. 20% on tuk-tuk for one month). Each has a percentage or fixed amount, start and end dates, zones, categories, optional max discount, and usage limits. The discount is shown in the quote and snapshotted with the ride. | Owner, 2026-09-24 | Approved (new); funding F-7 |
+| D-24 | **Categories are CMS data.** Car, motorcycle, and tuk-tuk are the initial records. Admins can add categories such as Luxury or Women's taxi, each with localized name, icon, base vehicle type (car, motorcycle, or tuk-tuk, which drives routing and vehicle rules), seats, driver and vehicle eligibility requirements, required documents, tariffs, commission, discounts, and zone enablement. A driver can qualify for several categories. | Owner, 2026-09-24 | Approved (new); women's category F-8 |
+| D-25 | **Surge.** A surge multiplier per zone and category, derived from open requests versus available drivers, bounded by CMS minimum and maximum, with a CMS on/off switch and manual override. The rider sees the multiplier before requesting. | Owner, 2026-09-24 | Approved (new); launch mode F-9 |
+| D-26 | **Add-ons.** CMS-defined fixed or percentage add-ons (tolls, airport fees, taxes, surcharges) with the zones, categories, and times they apply. No tax or fee values are invented. | Owner, 2026-09-24 | Approved (new) |
+| D-27 | Behavioral (willingness-to-pay) pricing is not in the first release. | C-08 | Approved |
+| D-28 | **Payment timing.** The rider pays at the end of the trip. A CMS parameter sets the percentage of the route after which payment is requested; initial value 100%. | Owner, 2026-09-24 (F-6) | Approved |
+| D-29 | **Fallback to cash.** If an in-app payment fails, the driver is told to collect cash. Applies once a non-cash method exists (see G-1). | Owner, 2026-09-24 | Approved; depends on G-1 |
+| D-30 | **Driver wallet.** Each driver has a ledger wallet. Trip earnings, tips, discount compensation, commission owed, and payouts are immutable ledger entries. A payout is due when the balance owed to the driver exceeds X, or Y weeks have passed since the last payout. X and Y are set in the CMS. The payout method is `TBD`. | Owner, 2026-09-24 (F-4) | Approved |
+| D-31 | **Discount funding** is a parameter on each discount (platform, driver, or a split). All money is modeled through the platform ledger, so changing the policy needs no code change. | Owner, 2026-09-24 (F-7) | Approved |
+| D-32 | **Driver verification.** Every driver uploads ID and required documents from the app, directly to private S3 storage. An admin approves or rejects; only approved drivers can go online. Drivers submit vehicle photos monthly for a check-up; the interval and grace period are set in the CMS, and an overdue check blocks going online. | Owner, 2026-09-24 (F-8) | Approved; overdue rule default G-3 |
+| D-33 | **Admin oversight.** Admins with the right permission can view all rides and all chats. Every view is audited. | Owner, 2026-09-24 | Approved (see C-10) |
+| D-34 | **Account blocking.** An admin can block any account. A blocked driver cannot go online; a blocked rider cannot request rides. Sessions and sockets are cut, and the user sees a message with a support contact. A block issued during a trip takes effect when the trip ends (D-41). | Owner, 2026-09-24 | Approved; amended by D-41 |
+| D-35 | **Women's category.** Women drivers carrying women riders only. | Owner, 2026-09-24 (F-8) | Approved; rider eligibility G-2 |
+| D-36 | Surge is manual (admin-set) at launch. Automatic surge is a later version. | Owner, 2026-09-24 (F-9) | Approved |
+| D-37 | **Tips.** A rider can add a tip when reviewing the driver. The full tip goes to the driver, with no commission. Tips are paid in cash and recorded for information (D-42). | Owner, 2026-09-24 | Approved; cash collection G-5 |
+| D-38 | **Payment methods are CMS entities.** Every method (cash, OMT, Whish, bank, card, etc.) is disabled until an admin enables it and enters its details in the CMS. Only cash is enabled at launch. A method can be enabled only if its provider adapter has been built and tested; the CMS refuses otherwise. | Owner, 2026-09-24 (G-1) | Approved |
+| D-39 | **Women-rider eligibility.** The rider declares gender when creating the account. Management confirms it after the first ride. The driver may decline and report a mismatch at pickup without penalty. | Owner, 2026-09-24 (G-2) | Approved |
+| D-40 | An overdue vehicle check never blocks a driver at once: reminders first, then a block from going online after a CMS grace period. | Owner, 2026-09-24 (G-3) | Approved |
+| D-41 | **Blocking never interrupts a ride.** A block issued during a trip takes effect when the trip ends. This replaces the admin "end trip" option in D-34. | Owner, 2026-09-24 (G-4) | Approved |
+| D-42 | **Commission switch.** The CMS has a "commission counting" switch. Each ride stores the switch value at request time as a true/false flag. Commission is calculated only over rides flagged true. Tips and other cash between rider and driver carry no commission; tips are recorded for information only. | Owner, 2026-09-24 (G-5) | Approved |
+| D-43 | **Driver debt settlement methods are CMS entities**, e.g. deduction from payout or cash pickup by an agent. Admins enable them later; every collection is an admin-recorded ledger entry. | Owner, 2026-09-24 (G-6) | Approved |
+| D-44 | Rider and driver phone numbers are visible from driver confirmation until a CMS-set time after the trip ends (e.g. 30 min, 8 h, 24 h, 2 days). | Owner, 2026-09-24 (Q9) | Approved |
+| D-45 | Admin console is English only at launch. | Owner, 2026-09-24 (Q10) | Approved |
 
 ## 4. First-release boundary
 
 **In the first release (subject to answers):**
 - Rider app: sign-in, language (ar/en/fr, RTL), map, pickup/destination, saved places, category, CMS fare, immediate request, search status, driver details, live tracking, trip states, chat with translation, call after confirmation, cash outcome, review, help, lost-item case, SOS options as published.
 - Driver app: sign-in, onboarding with documents/photos, approval status, online/offline, background location, offer ACK plus 3-second accept/decline, navigation, trip transitions, cash report, chat, call, review, help, damage case, SOS.
-- Admin console: RBAC and MFA, driver/vehicle review, zones/categories, fare and currency publication, live trips, support cases, SOS configuration and incidents, reviews, cash records, audit.
+- Admin console: CMS for categories, tariffs, surge, add-ons, discounts and promo codes, commission, terms and policies, SOS fallback number; RBAC and MFA, driver/vehicle review, zones/categories, fare and currency publication, live trips, support cases, SOS configuration and incidents, reviews, cash records, audit.
 - Backend: everything in HLD-04 to HLD-24 for the flows above.
 
 **Explicitly out of the first release:**
@@ -82,7 +113,7 @@ No conflict found in the core dispatch rule: one outstanding offer per ride, inc
 
 **Also out of the first release:** bus service (D-12) and kiosk mode (D-13).
 
-**Remaining boundary question:** sign-in method (Q8).
+**Also out of the first release:** behavioral pricing (D-27).
 
 ---
 
@@ -135,11 +166,11 @@ Exceptions: ACK timeout; window expires; late accept rejected; app killed or bac
 | Q5 | Fixed upfront fare or final fare that can change | OD-03, C-04 | Resolved: CMS parameter (D-15) |
 | Q6 | Commission on cash trips at launch | OD-06 | Resolved: pay-day calculation (D-16) |
 | Q7 | SOS actions at launch and who responds | OD-09 | Resolved: agent chat and callback (D-17) |
-| Q8 | Sign-in method | OD-11 | **Phase 0** | Phone + SMS OTP for riders and drivers. Email + password + TOTP for admins |
-| Q9 | Phone number visibility window | OD-08 | Phase 1 | Real numbers from confirmation until 30 min after trip end |
-| Q10 | Admin console languages | OD-11 | Phase 1 | English only at launch |
+| Q8 | Sign-in method | OD-11 | Resolved (D-18) |
+| Q9 | Phone number visibility window | OD-08 | Phase 1 | Resolved (D-44) |
+| Q10 | Admin console languages | OD-11 | Phase 1 | Resolved (D-45) |
 | Q11 | ACK timeout, max reoffers, max rider search time | OD-13, OD-16 | Phase 2 | 5 s ACK, 3 offers per driver per ride, 3 min search |
-| Q12 | Exact formula shape, rounding, minimum fare, quote expiry | OD-03, D-15 | Phase 2 | See F-1 |
+| Q12 | Rounding per currency, quote expiry, surge formula details | OD-03, D-15, D-25 | Phase 2 | Round USD to $0.25 and LBP to 5,000. Quote valid 5 min |
 | Q13 | Cancellation and no-show rules | BR-20 | Phase 2 | No fees at launch. Reasons recorded. No-show after 5 min wait |
 | Q14 | Driver document list per category | OD-02, BR-05 | Phase 4 | Owner supplies, with local legal input |
 | Q15 | Review format, visibility, moderation | OD-10 | Phase 2 | 1–5 stars + optional text. Only averages shown |
@@ -156,11 +187,26 @@ Exceptions: ACK timeout; window expires; late accept rejected; app killed or bac
 
 | ID | Question | Needed by | Proposed default |
 |---|---|---|---|
-| F-1 | "km × rate × road time × factor" multiplies distance by time, which grows very fast on long trips. Is the intent `(km × km-rate + minutes × minute-rate) × factor`? | Phase 2 | Yes, plus an optional base fare and minimum fare |
-| F-2 | When both USD and LBP are published, does the rider see both amounts? Which currency is the driver told to collect? | Phase 1 | Show both. Rider pays in either |
-| F-3 | When recalculation mode is on, may the final fare exceed the quote by any amount? | Phase 2 | Cap set in the CMS, e.g. +20% |
-| F-4 | At pay day, is commission calculated with the rule in force at trip time, or at pay day? How often is pay day? | Phase 8 | Rule at trip time. Weekly |
-| F-5 | What happens when SOS is pressed and no agent is online? | Phase 1 | Show the emergency number to dial and alert on-call staff |
+| F-1 | "km × rate × road time × factor" multiplies distance by time, which grows very fast on long trips. Is the intent `(km × km-rate + minutes × minute-rate) × factor`? | Phase 2 | Resolved (D-15) |
+| F-2 | When both USD and LBP are published, does the rider see both amounts? Which currency is the driver told to collect? | Phase 1 | Resolved (D-19) |
+| F-3 | When recalculation mode is on, may the final fare exceed the quote by any amount? | Phase 2 | Resolved (D-20) |
+| F-4 | Is commission calculated with the rule in force at trip time? How often is pay day? (See F-6.) | Phase 8 | Resolved (D-30) |
+| F-6 | Owner answered F-4 with "the rider pays after 30% of the total route is passed." Does this mean (a) cash is collected once 30% of the route is done, (b) a rider who ends the trip early after 30% pays the full fare, or (c) something else? | Phase 2 | Resolved (D-28) |
+| F-7 | Who pays for a discount: the platform or the driver? | Phase 2 | Resolved (D-31) |
+| F-8 | For a women's category: must drivers be women, verified how, and can any rider book it? Gender is sensitive personal data. | Phase 1 | Resolved (D-32, D-35); see G-2 |
+| F-9 | At launch, is surge automatic or manual only? | Phase 2 | Resolved (D-36) |
+| F-5 | What happens when SOS is pressed and no agent is online? | Phase 1 | Resolved (D-21) |
+
+### Third-round questions
+
+| ID | Question | Needed by | Proposed default |
+|---|---|---|---|
+| G-1 | Is a non-cash in-app payment method (e.g. Whish, card, wallet top-up) part of the first release? If not, payment cannot "fail" and money stays with the driver. | Phase 1 | Resolved (D-38) |
+| G-2 | How is a rider verified as a woman for the women's category? | Phase 1 | Resolved (D-39) |
+| G-3 | When a monthly vehicle check is overdue, is the driver blocked immediately? | Phase 4 | Resolved (D-40) |
+| G-4 | When blocking an account during a trip, does the trip end? | Phase 4 | Resolved (D-41) |
+| G-5 | With cash, a tip added later in the review cannot be handed to a driver who has left. How is it paid? | Phase 1 | Resolved (D-42) |
+| G-6 | When a driver owes the platform (cash commission), how does the driver pay it? | Phase 8 | Resolved (D-43) |
 
 ## 8. Risk register
 
@@ -176,6 +222,12 @@ Exceptions: ACK timeout; window expires; late accept rejected; app killed or bac
 | R-11 | Recalculated final fares cause rider disputes. | Medium | Show quote and final fare with a breakdown. CMS cap (F-3). |
 | R-08 | Regulatory status of tuk-tuks, motorcycles, and independent drivers is unconfirmed. | High | Legal review Q21 before public launch. Category toggles per zone. |
 | R-09 | Scope size versus budget. | High | Strict phase gates. P0 before P1. Defer bus and kiosk. |
+| R-12 | Surge in a new market may upset riders or draw regulatory attention. | Medium | CMS cap and switch. Show the multiplier before booking. Start manual (F-9). |
+| R-13 | Promo abuse through multiple accounts. | Medium | Per-rider and per-phone limits. Audit usage. |
+| R-14 | A women's category needs gender data and verification, which is sensitive. | Medium | F-8 policy, least-data storage, legal review. |
+| R-15 | Scope grew in this round (CMS categories, surge, discounts, terms). | Medium | Built into Phases 8 and 10. P1 priority, after the core ride loop works. |
+| R-16 | Enabling a non-cash method later may need a payment licence or licensed partner in Lebanon. | High | D-38 keeps them off. Legal review and a built adapter before enabling. |
+| R-17 | Blanket admin access to chats is a privacy and insider-misuse risk. | Medium | Separate permission, audit of every view, privacy notice. |
 | R-10 | SMS OTP cost and deliverability in Lebanon. | Medium | Evaluate providers, including WhatsApp OTP, in Phase 2. |
 
 ---
@@ -197,8 +249,14 @@ Each criterion must be demonstrated with evidence. Numeric values marked `TBD` a
 10. Chat keeps original text when translation fails. Calls are possible only in the approved window (VT-13).
 11. SOS opens a support-agent chat. The staff console shows it as priority, and the app shows truthful status only (VT-14).
 12. Lost-item and damage cases reach a recorded resolution without automatic rider charges (VT-16).
+12a. Each trip records its commission flag and the commission owed from the CMS rate. Only flagged rides count, and a pay-day report lists what each driver owes.
 13. Every admin mutation is role-checked, MFA-protected, and audited.
-12a. Trip records support a pay-day commission report per driver, with zero commission charged per trip.
+13e. A driver with an unapproved or overdue vehicle check cannot go online. A blocked rider cannot request and a blocked driver cannot go online.
+13f. Wallet balances are derived only from ledger entries, and pay-day triggers follow the CMS X and Y values.
+13a. The quote shows base, distance, time, surge, add-ons, and discount, and matches the published tariff for the ride's zone, category, and currency.
+13b. A promo code or category discount applies only inside its dates, zones, categories, and limits.
+13c. A category created in the CMS appears to riders and drivers in enabled zones without an app release.
+13d. Users must accept the current terms version, and each acceptance is stored with version and time.
 14. Load test meets the Phase 2 targets for concurrent drivers, riders, and location updates. Values `TBD`.
 15. Staging restore and failover drills succeed within the agreed recovery targets. Values `TBD`.
 
@@ -208,8 +266,8 @@ Each criterion must be demonstrated with evidence. Numeric values marked `TBD` a
 
 | Phase | Name | Status |
 |---|---|---|
-| 0 | Reconcile discovery, lock scope | **In review** |
-| 1 | Experience design | Not started |
+| 0 | Reconcile discovery, lock scope | **Approved 2026-09-24** |
+| 1 | Experience design | **In progress** |
 | 2 | Architecture, domain model, contracts | Not started |
 | 3 | Repository and working foundation | Not started |
 | 4 | Identity, onboarding, eligibility | Not started |
@@ -221,7 +279,31 @@ Each criterion must be demonstrated with evidence. Numeric values marked `TBD` a
 | 10 | Admin operations and configuration | Not started |
 | 11 | Hardening and release decision | Not started |
 
-## 11. Traceability
+## 11. Proposed BRS amendments
+
+These add owner requirements from 2026-09-24. The BRS Word file is not edited; the amendments live here until a BRS revision is approved.
+
+| ID | Requirement | Priority | Decision |
+|---|---|---|---|
+| BR-50 | Admins shall publish upfront fare components per category, zone, and currency: base, per-km, per-minute, minimum, rounding. | M | D-15 |
+| BR-51 | Admins shall configure surge per zone and category within set bounds, and the rider shall see it before requesting. | M | D-25 |
+| BR-52 | Admins shall configure add-ons such as tolls, fees, taxes, and surcharges. | M | D-26 |
+| BR-53 | Admins shall set commission per category and zone. Each trip records the commission owed, settled on pay day. | M | D-16 |
+| BR-54 | Admins shall create promo codes and time-limited category discounts. | M | D-23 |
+| BR-55 | Admins shall create and edit vehicle categories with their eligibility, documents, fares, and enablement. | M | D-24 |
+| BR-56 | Admins shall publish versioned terms and policies per language. Users accept them, and acceptance is recorded. | M | D-22 |
+| BR-57 | Rider and driver see both currencies when both are published. The rider may pay in either. | M | D-19 |
+| BR-58 | Payment is requested at a CMS-set percentage of the route, default 100%. | M | D-28 |
+| BR-59 | Each driver has a ledger wallet with CMS-set payout triggers. | M | D-30 |
+| BR-60 | Drivers submit monthly vehicle photos for review at a CMS-set interval. | M | D-32 |
+| BR-61 | Authorized admins can view all rides and chats, with every view audited. | M | D-33 |
+| BR-62 | Admins can block any rider or driver account from riding or going online. | M | D-34 |
+| BR-63 | Riders can tip the driver when reviewing. | M | D-37 |
+| BR-64 | Payment methods and debt-settlement methods are managed in the CMS; only cash is enabled at launch. | M | D-38, D-43 |
+| BR-65 | Riders declare gender at sign-up for women's category eligibility, confirmed by management. | M | D-39 |
+| BR-66 | A CMS switch controls whether new rides count toward commission, stored per ride. | M | D-42 |
+
+## 12. Traceability
 
 The full BR/NFR → HLD → LLD → VT matrix is in BRS §10 and LLD §13 and remains valid. Additions from this register:
 

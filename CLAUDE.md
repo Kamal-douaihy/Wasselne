@@ -10,9 +10,13 @@ On-demand rides in Lebanon: **Wasselne** rider app + **Wasselne Driver** app (Fl
 ## Non-negotiable rules
 - Strict phase gates: stop at each phase end, report (goal, decisions, files, verification actually performed, TBDs, next phase), wait for explicit owner approval.
 - Never overwrite files in `Documents/`. New deliverables go in `docs/`.
-- CMS-only fares, versioned and snapshotted per ride. No driver price entry. Fare from km, per-km rate, road time, CMS factor. Separate USD and LBP tariffs, either or both published. CMS parameter picks fixed vs recalculated final fare (D-15).
+- CMS-only fares, versioned and snapshotted per ride. No driver price entry. Upfront pricing: (base + km-rate×km + minute-rate×min) × surge + add-ons − discount, min fare, rounding; all CMS per category/zone/currency (D-15, D-25, D-26). USD and/or LBP tariffs; rider pays in either (D-19). CMS picks fixed vs recalculated final fare, with CMS cap (D-20).
 - Exactly one outstanding offer per ride (PENDING_ACK or ACTIVE). 3-second window starts at authenticated app ACK, from DB clock. Old offer terminal before the next.
-- Cash only. OMT/Whish/bank disabled with no charge path. No per-trip commission; record trips for pay-day commission (D-16).
+- Cash only. OMT/Whish/bank disabled with no charge path. CMS commission % per category/zone recorded per trip, settled on pay day (D-16).
+- Categories, discounts/promo codes, terms and policies are CMS data (D-22..D-24). No behavioral pricing (D-27).
+- Payment requested at CMS % of route (default 100%, D-28). Driver ledger wallet; payout when balance > X or after Y weeks, CMS (D-30). Discount funding is a per-discount parameter (D-31). Tips 100% to driver (D-37).
+- Drivers upload ID/docs from app to private S3; admin approves; monthly vehicle photos (D-32). Admin can view all rides/chats (audited) and block accounts (D-33, D-34). Women's category = women drivers, women riders (D-35). Surge manual at launch (D-36).
+- Payment and debt-settlement methods are CMS entities, all disabled except cash (D-38, D-43). Blocks never interrupt a ride (D-41). Per-ride commission flag snapshotted from a CMS switch; commission = flagged rides only (D-42). Women riders declare gender at sign-up, confirmed by management (D-39).
 - Bus and kiosk are future scope. Launch zones/categories are set in the CMS, never hard-coded.
 - SOS = priority chat with a support agent who calls the user (D-17). Never claim a call or help happened.
 - Never invent Lebanese legal rules, fares, document lists, emergency numbers, SLAs. Mark `TBD`.
