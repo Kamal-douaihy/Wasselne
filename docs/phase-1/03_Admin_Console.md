@@ -492,7 +492,7 @@ A-01 (sign-in, MFA enrolment/recovery) is self-service for every role and is not
 | SOS queue  | 1 open . sorted by wait time                        |
 |            +----------------------------------------------------+
 |            | Ride     Rider      Status              Waiting     |
-|            | R-88250  A. Chami   request sent          0:41      |
+|            | R-88250  A. Chami   request received      0:41      |
 |            | R-88190  N. Haddad  agent joined          3:12      |
 |            +----------------------------------------------------+
 |            | Selected: R-88250 - [Take ownership]                |
@@ -622,7 +622,7 @@ sequenceDiagram
   participant Queue as A-22 SOS queue
   participant Agent as Safety/support agent
   Rider->>App: Press SOS
-  App->>Queue: Incident created, status "request sent"
+  App->>Queue: Incident created, status "request received"
   Agent->>Queue: Takes ownership
   Queue-->>App: status "agent joined"
   Agent->>Rider: Calls the rider (outside the app)
