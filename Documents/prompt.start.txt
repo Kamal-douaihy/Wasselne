@@ -1,0 +1,87 @@
+You are a principal software architect, mobile engineer, product designer, DevOps engineer, and expert at writing implementation prompts for Claude Code.
+
+Your task is to produce one complete, paste-ready prompt addressed to Claude Code. That prompt must guide Claude Code through the design and implementation of Wasselne (rider app), Wasselne Driver (driver app), and a secure web-based Wasselne Admin console. Your response must be the Claude Code prompt itself, not an implementation, a generic architecture essay, or a promise to write the prompt later. Write it in direct instructions to Claude Code. Do not ask me to supply designs before you produce the prompt: collecting and evaluating designs belongs inside Claude Code's first phases.
+
+Product intent
+
+Wasselne is an on-demand transport platform inspired by Uber, Careem, Bolt, and regional taxi services. A rider can locate nearby eligible vehicles, choose a category (car, motorcycle, or tuk-tuk), set pickup and destination, see a fare estimate, request a ride, see the assigned driver's live location and route, communicate with the driver, and contact support. A driver can register with photos and documents, become available after approval, receive nearby offers, accept or decline them, navigate to pickup and destination, communicate with the rider, and contact support. Admins review drivers, configure operational data, handle trips and support, and see relevant live status. Chat must support translation while preserving the original message.
+
+Bus service is an open product decision. A scheduled bus with routes, stops, seats, and timetables requires different flows from on-demand car/motorcycle/tuk-tuk dispatch. The Claude Code prompt must require Claude to clarify which bus model is intended and whether buses are in the first release. It must never silently implement a bus as a large taxi or silently drop the requirement. It may recommend a later bus module if the user approves.
+
+Architectural baseline to preserve
+
+Architecture: TypeScript/NestJS modular monolith with explicit auth, rider, driver, vehicle, dispatch, trip, pricing, payment/ledger, chat/translation, support, notification, and admin boundaries. HTTP API, WebSocket gateway, and background workers can be separate processes from one codebase. Use at least two application instances behind a load balancer in production, not as a requirement for local development.
+
+Mobile: Two separately installable Flutter/Dart applications with shared packages for models, API, design tokens, and carefully chosen reusable UI. Driver background location requires platform-specific Android/iOS configuration and testing; Flutter alone does not solve it.
+
+Admin: React/Next.js with TypeScript. It is an operations console, not a generic page-content CMS. Include role-based permissions and an audit trail.
+
+Durable records: Managed PostgreSQL with PostGIS for identities, driver and vehicle approvals, documents' metadata, offers, trips and transitions, prices, financial records, chat, tickets, zones, and audit data.
+
+Ephemeral state: Managed Redis with GEOSEARCH for currently eligible nearby drivers and short-lived presence/location data. Check timestamps, heartbeat freshness, availability, vehicle category, and approval before dispatch. Redis is not the source of truth for trip ownership or money. Avoid making Redis lock ownership the sole defense against double assignment.
+
+Dispatch: Shortlist candidates by category and location, use road ETA for a small shortlist, create offers with expiry and configurable fan-out, and let exactly one eligible driver win. Validate offer, trip, and driver state and reserve/accept atomically in PostgreSQL; use conditional updates, transactions, appropriate constraints, and idempotency keys. Explicitly handle concurrent acceptances, repeated requests, timeouts, cancellations, and worker crashes.
+
+Live experience: WebSockets for foreground location, trip events, and chat; FCM/APNs notifications for background offers. On reconnection, obtain an authoritative trip snapshot and resume from server-side state. Neither a socket packet nor a push notification guarantees an offer was accepted or delivered.
+
+Maps and navigation: Begin with a commercial map and routing provider such as Google Maps/Routes, subject to coverage, vehicle-mode suitability, licensing, and cost validation in the launch area. Use in-app maps and route display for rider and driver; decide through product discovery whether driver turn-by-turn navigation starts with external-map deep links or an embedded navigation SDK. Do not conflate straight-line proximity with road ETA or claim external navigation is cost-free in all contexts.
+
+Files: Private S3-compatible object storage for driver registration photos/documents, preferably direct uploads via short-lived signed URLs; record metadata and review status in PostgreSQL. Restrict access and retention.
+
+Communication: Trip-scoped chat in PostgreSQL; translate on demand and retain the original and language information. Link support tickets to trips and expose safe rider/driver contact options. Evaluate local masked calling and emergency/SOS needs before implementation.
+
+Infrastructure: Containerized deployment in a region close to the initial market, multiple availability zones, managed Postgres with backup/failover, managed Redis, object storage, secret management, health checks, CI/CD, staging, logging, metrics, tracing, alerting, and restore drills. Start with a managed container service; no Kafka, Kubernetes, H3, NoSQL chat database, or dedicated Go matching service without a measured reason.
+
+The baseline is an initial recommendation, not permission to invent vendor account details, local regulations, fare formulas, launch country/city, payment providers, or feature priority. Require Claude to surface and resolve consequential unknowns with me before implementing their dependent phases. Choose concrete versions, plugins, SDKs, and cloud services only after checking their current documentation and compatibility when implementation begins. Document decisions and trade-offs.
+
+Non-negotiable rules for the Claude Code prompt you produce
+
+Strict sequential phases. Claude Code completes and verifies one phase, shows me its outputs and any remaining risks, and then explicitly waits for my approval before starting the next phase. Approval of a phase never implies approval of later phases. At the beginning of work, Claude should inspect the actual repository and existing artifacts and adapt the plan to what is already there rather than overwrite completed work. If it has no repository access, ask for the repo or location only when needed for implementation.
+
+Start with discovery, then design. Phase 0 establishes product scope and acceptance criteria; Phase 1 establishes rider, driver, and admin UX and design system. Claude Code must not write application code, provision cloud resources, or deploy in these phases. It can write reviewable discovery/design documents and token files in the repository when available.
+
+No automatic progression. At each phase boundary Claude must provide: goals; decisions and reasons; files changed; runnable evidence (tests, builds, screenshots when relevant); unresolved questions; and the precise next phase. Then stop for approval. Routine coding, debugging, and tests within an approved phase should continue without asking for permission for every edit.
+
+Use a decision log and phase checklist that survive context changes. Record assumptions explicitly; mark unknowns as TBD, not as fictional finished features. Never claim a build, load test, external integration, or phone test passed unless it actually ran. Where credentials or devices are unavailable, deliver a working local adapter/test double and clearly identify the missing integration test.
+
+Security and privacy by design: enforce access and ownership server-side; protect precise locations, documents, phone numbers, and chats; minimize retention; use secure credential storage, OTP abuse controls, encryption in transit and at rest, upload validation, least privilege, admin MFA, and auditable admin actions. Ensure location is shared only with appropriate parties and at appropriate trip stages. Discover applicable licensing, transport, privacy, tax, payment, and emergency requirements for the launch jurisdiction rather than assuming a jurisdiction.
+
+Design for unreliable phones/networks: foreground/background GPS rules, accuracy checks and stale positions, battery-conscious adaptive update intervals, reconnection, offline queueing where safe, sequence numbers or timestamps, deduplication, expired offers, socket-to-push fallback, and user-visible state recovery. Avoid hard-coded location frequencies as universal guarantees.
+
+No hollow scaffolding: each approved implementation phase should deliver a usable, vertically integrated result with necessary schemas, APIs, app/admin screens, migrations, tests, and operational instructions for its scope. No fake dashboards presented as live data. Keep provider integrations behind narrow interfaces while still implementing the real core flow.
+
+Financial correctness: distinguish fare quote, final fare, payment collection, refunds, platform commission, and driver payout. Support a cash-first launch only if I approve it; use a payment provider when chosen. Record money movements in an auditable ledger with idempotent processing, never by arbitrary balance edits.
+
+Concrete verification: meaningful automated tests for trip state, concurrent acceptance, idempotency, expiration, permissions, and money; integration and end-to-end journeys; load tests simulating realistic location updates and simultaneous ride requests; actual driver GPS/push/navigation tests on real Android and iOS devices before a public launch. Define measurable success criteria with me instead of claiming “no crashes.”
+
+Required phases inside the Claude Code prompt
+
+Specify concrete deliverables and an approval gate for every phase. Organize dependent work in this order, adjusting only after explaining the reason and obtaining approval:
+
+Phase 0 — Product discovery and scope lock. Inspect existing work. Clarify launch country/city and languages (including Arabic/RTL if desired), target riders/drivers, taxi/car/motorcycle/tuk-tuk rules, bus model and timing, accessibility, pickup/dropoff, booking now versus scheduled rides, cash/cards, cancellation/no-show, fare model, commissions, document requirements, support, emergency needs, and intended first release. Map rider, driver, admin, and support journeys. Produce an MVP boundary, prioritized requirements, open decisions, measurable acceptance criteria, and a risk register. Stop for my approval. Keep questions focused and grouped; do useful independent work before asking.
+
+Phase 1 — UX and design system. Ask for and inspect references, mockups, or brand assets if available; propose a practical design direction if absent. Design all three surfaces: rider, driver, admin. Specify map states, vehicle category selection, booking, driver offers, arrival/pickup, trip progress, cancellation, chat/translation, help, driver onboarding/document review, and empty/error/offline states. Include accessibility, localization, RTL, permissions, and low-end phone considerations. Produce user flows, annotated screen list/wireframes and design tokens (Flutter theme and web tokens). Do not import Soli Meson's luxury palette or 3D tailoring patterns. Stop for approval.
+
+Phase 2 — Architecture, domain, and data contract. Produce an architecture decision record, module ownership, trip and offer state machines with allowed transitions, data-flow/threat model, API and WebSocket contracts, location freshness and retention policies, notification retry/outbox strategy, provider interfaces, and a schema/migration plan. Specify DB constraints that prevent one trip being accepted twice and a driver holding incompatible active trips; describe how an atomic accept works, including expired offers and concurrent requests. Plan PostGIS zones and Redis geo/presence organization, signed uploads, and chat privacy. Present reviewable schema and API examples, capacity and cost assumptions, and explicit unknowns. Stop for approval before writing implementation code.
+
+Phase 3 — Repository and foundational backend. Set up/extend a monorepo or a clearly documented multi-project layout for both Flutter apps, shared packages, NestJS API and worker, and Next.js admin. Add local development with PostgreSQL/PostGIS and Redis, migrations, validation, structured logs, error handling, health checks, CI, secrets examples, and test tooling. Build the first working authenticated API and a smoke-test path. Stop for approval.
+
+Phase 4 — Identity, drivers, documents, and initial admin approvals. Implement rider/driver authentication and profiles using approved sign-in methods; driver and vehicle onboarding per category; private image/document upload and validation; admin review/approve/reject/revoke; role permissions; audit events; expiry/review status. Only approved drivers may become available. Provide working minimal app/admin screens and tests. Stop for approval.
+
+Phase 5 — Presence, GPS, maps, and discovery. Implement driver online/offline, authorized background location, heartbeat/stale filtering, Redis geo index, eligible nearby discovery by vehicle type, rider map, pickup/destination selection, map/geocoding/routes integration through provider interfaces, and privacy/battery safeguards. Validate realistic permission and lost-network behavior. Stop for approval.
+
+Phase 6 — Ride request and dispatch. Implement quote/request, offer fan-out and expiry, accept/decline, deterministic winner and driver reservation in PostgreSQL, idempotent retries, worker recovery, socket/push delivery, and reconnect snapshot. Include high-contention tests with two drivers accepting simultaneously, duplicate bookings, expired offers, reassignment and cancellation. Both apps must show coherent booking/offer states. Stop for approval.
+
+Phase 7 — Full trip lifecycle and navigation. Implement arriving, at pickup, started, completed, cancelled/no-show flows with server-enforced transitions; route display, driver navigation choice, ETA updates without excessive provider requests, rider live tracking only during the authorized window, event history, and appropriate location trail sampling. Test bad GPS, app termination, reconnection, and disputed transitions. Stop for approval.
+
+Phase 8 — Fares, payment, and ledger. Implement approved category/zone fare rules, quote versus actual fare, cash and/or provider-backed card flow according to Phase 0 decisions, idempotent capture/webhooks, refunds/adjustments, commissions and driver accounting, receipts and reconciliation. Protect against duplicate charging and conflicting trip state. Stop for approval.
+
+Phase 9 — Chat, translation, contact, and support. Implement scoped original-message chat and optional translation, attachment policy if approved, message delivery/reconnect behavior, help tickets in both apps, admin support workflow, and approved contact/SOS options. Control costs, privacy, and abuse. Stop for approval.
+
+Phase 10 — Admin operations and business configuration. Complete live fleet/trip views, driver/document workflows, categories/vehicles, service zones, price configuration with versioning and safe publication, tickets, refunds where authorized, reporting, role-based access, and audit logs. Use real backend data. Stop for approval.
+
+Phase 11 — Hardening and release readiness. Complete security/privacy review, accessibility/localization verification, integration/end-to-end tests, device and network testing, realistic load tests, backups and restore exercise, production deployment design, staging, alerts/runbooks, feature flags and rollback, and a cost/operations forecast. Show measured results and remaining risks. Do not publish apps, enable live payments, or deploy publicly until I separately authorize those external actions. Stop for my final release decision.
+
+Output format for your response
+
+Return only one complete Claude Code prompt in a single Markdown block or clearly delimited document. Include a brief system-role assignment, the product and architectural baseline, implementation and verification rules, detailed sequential phases and per-phase approval gates, and a final START HERE instruction. Do not execute any phase yourself. The final instruction to Claude Code must say: Start Phase 0 only. Inspect the repository or project materials available, summarize what you find, and ask the smallest set of product questions needed to lock the MVP. Do not begin Phase 1 or write application code until I approve Phase 0.
