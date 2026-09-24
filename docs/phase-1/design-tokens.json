@@ -1,0 +1,141 @@
+{
+  "$schema_note": "Wasselne design tokens v0.1 (Phase 1 draft). Platform-neutral; converted to Flutter ThemeData and CSS variables in Phase 3. Units: dp/px are equivalent logical pixels.",
+  "color": {
+    "brand": {
+      "cedar-50": "#E7F3EE",
+      "cedar-100": "#C3E2D5",
+      "cedar-300": "#5FB08F",
+      "cedar-500": "#0B6E4F",
+      "cedar-700": "#08543C",
+      "cedar-900": "#043324",
+      "amber-100": "#FDF0C4",
+      "amber-500": "#F4B400",
+      "amber-700": "#B38400",
+      "sos-100": "#FBE3E3",
+      "sos-500": "#C62828",
+      "sos-700": "#8E1B1B"
+    },
+    "neutral": {
+      "0": "#FFFFFF",
+      "50": "#F6F7F7",
+      "100": "#ECEEEE",
+      "200": "#D9DDDC",
+      "400": "#9AA3A0",
+      "600": "#5E6765",
+      "800": "#2B3130",
+      "900": "#171B1A",
+      "1000": "#0B0D0D"
+    },
+    "feedback": {
+      "success": "#1E7D32",
+      "warning": "#B26A00",
+      "error": "#C62828",
+      "info": "#1565C0"
+    },
+    "light": {
+      "background": "{neutral.50}",
+      "surface": "{neutral.0}",
+      "surface-raised": "{neutral.0}",
+      "border": "{neutral.200}",
+      "text-primary": "{neutral.900}",
+      "text-secondary": "{neutral.600}",
+      "text-disabled": "{neutral.400}",
+      "primary": "{brand.cedar-500}",
+      "on-primary": "{neutral.0}",
+      "primary-container": "{brand.cedar-50}",
+      "accent": "{brand.amber-500}",
+      "on-accent": "{neutral.900}",
+      "danger": "{brand.sos-500}",
+      "on-danger": "{neutral.0}",
+      "map-driver": "{brand.cedar-500}",
+      "map-driver-stale": "{neutral.400}",
+      "map-pickup": "{brand.cedar-700}",
+      "map-destination": "{neutral.900}",
+      "route": "{brand.cedar-500}"
+    },
+    "dark": {
+      "background": "{neutral.1000}",
+      "surface": "{neutral.900}",
+      "surface-raised": "{neutral.800}",
+      "border": "{neutral.600}",
+      "text-primary": "{neutral.50}",
+      "text-secondary": "{neutral.200}",
+      "text-disabled": "{neutral.600}",
+      "primary": "{brand.cedar-300}",
+      "on-primary": "{neutral.1000}",
+      "primary-container": "{brand.cedar-900}",
+      "accent": "{brand.amber-500}",
+      "on-accent": "{neutral.900}",
+      "danger": "#EF5350",
+      "on-danger": "{neutral.1000}",
+      "map-driver": "{brand.cedar-300}",
+      "map-driver-stale": "{neutral.600}",
+      "map-pickup": "{brand.cedar-300}",
+      "map-destination": "{neutral.50}",
+      "route": "{brand.cedar-300}"
+    }
+  },
+  "typography": {
+    "font-family": {
+      "arabic": "IBM Plex Sans Arabic",
+      "latin": "IBM Plex Sans",
+      "mono": "IBM Plex Mono"
+    },
+    "scale": {
+      "display": { "size": 32, "line": 40, "weight": 600 },
+      "title-lg": { "size": 24, "line": 32, "weight": 600 },
+      "title": { "size": 20, "line": 28, "weight": 600 },
+      "body-lg": { "size": 18, "line": 26, "weight": 400 },
+      "body": { "size": 16, "line": 24, "weight": 400 },
+      "label": { "size": 14, "line": 20, "weight": 500 },
+      "caption": { "size": 12, "line": 16, "weight": 400 }
+    },
+    "driver-offer": {
+      "fare": { "size": 40, "line": 48, "weight": 700 },
+      "countdown": { "size": 48, "line": 56, "weight": 700 },
+      "pickup-eta": { "size": 24, "line": 32, "weight": 600 },
+      "button": { "size": 24, "line": 32, "weight": 700 }
+    },
+    "arabic-line-height-multiplier": 1.15
+  },
+  "spacing": { "0": 0, "1": 4, "2": 8, "3": 12, "4": 16, "5": 20, "6": 24, "8": 32, "10": 40, "12": 48, "16": 64 },
+  "layout": {
+    "gutter-phone": 16,
+    "gutter-tablet": 24,
+    "tablet-side-panel": 400,
+    "breakpoint-compact": 360,
+    "breakpoint-tablet": 600,
+    "breakpoint-admin-desktop": 1024,
+    "admin-nav-width": 248,
+    "admin-drawer-width": 480
+  },
+  "radius": { "sm": 6, "md": 10, "lg": 16, "sheet": 20, "pill": 999 },
+  "elevation": {
+    "0": "none",
+    "1": "0 1 2 rgba(0,0,0,0.08)",
+    "2": "0 2 8 rgba(0,0,0,0.12)",
+    "3": "0 8 24 rgba(0,0,0,0.16)"
+  },
+  "size": {
+    "touch-min": 48,
+    "button-height": 52,
+    "driver-offer-accept-height": 96,
+    "driver-offer-decline-height": 64,
+    "sos-button": 56,
+    "icon": 24,
+    "avatar": 48
+  },
+  "motion": {
+    "duration-fast": 120,
+    "duration-base": 200,
+    "duration-slow": 320,
+    "easing-standard": "cubic-bezier(0.2, 0, 0, 1)",
+    "reduced-motion": "Disable map camera animation, sheet springs and countdown ring easing; keep instant state changes."
+  },
+  "category-defaults": {
+    "note": "Initial CMS seed only. Categories, names, icons and colours are CMS data (D-24); apps must render any category from the server.",
+    "car": { "icon": "local_taxi", "color": "{brand.cedar-500}" },
+    "motorcycle": { "icon": "two_wheeler", "color": "{brand.amber-700}" },
+    "tuktuk": { "icon": "electric_rickshaw", "color": "{brand.cedar-700}" }
+  }
+}

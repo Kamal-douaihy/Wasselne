@@ -267,7 +267,7 @@ Each criterion must be demonstrated with evidence. Numeric values marked `TBD` a
 | Phase | Name | Status |
 |---|---|---|
 | 0 | Reconcile discovery, lock scope | **Approved 2026-09-24** |
-| 1 | Experience design | **In progress** |
+| 1 | Experience design | **Complete, awaiting approval** (`docs/phase-1/`) |
 | 2 | Architecture, domain model, contracts | Not started |
 | 3 | Repository and working foundation | Not started |
 | 4 | Identity, onboarding, eligibility | Not started |

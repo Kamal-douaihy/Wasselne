@@ -5,6 +5,7 @@ On-demand rides in Lebanon: **Wasselne** rider app + **Wasselne Driver** app (Fl
 ## Read first (instead of the Word docs)
 - `docs/phase-0/Wasselne_Phase0_Register.md` — authoritative summary: decisions, conflicts, open TBDs, risks, acceptance criteria, phase checklist.
 - Only open the source docs for detail. Word ed. 0.2 in `Documents/` is authoritative; `*_v0.1.md` files are older history (the v0.1 HLD's driver-proposed fare is superseded).
+- `docs/phase-1/` — UX specs: 00 direction/patterns, design-tokens.json, 01 rider (R-xx), 02 driver (DS-xx), 03 admin (A-xx).
 - `Documents/prompt-for-app.md` defines Phases 0–11 and working rules.
 
 ## Non-negotiable rules
