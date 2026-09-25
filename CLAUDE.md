@@ -9,6 +9,10 @@ On-demand rides in Lebanon: **Wasselne** rider app + **Wasselne Driver** app (Fl
 - `docs/phase-2/` — BUILD FROM THESE: 01_Architecture (modules, repo layout, stack, providers, parameter defaults), 02_State_Machines_and_Transactions (dispatch/offer/payment/ledger rules, lock order), schema.sql (+ schema-invariants-test.sql), openapi.yaml, ws-events.md.
 - `Documents/prompt-for-app.md` defines Phases 0–11 and working rules.
 
+## Current status (keep updated at every phase gate)
+Phases 0–2 approved. **Phase 3 delivered, awaiting owner approval** (`docs/phase-3/Phase3_Report.md`). Phase 4 must not start until Phase 3 is approved. Phases 5–11 are future work.
+Code layout and run instructions: `README.md`. API contract: `docs/phase-2/openapi.yaml` (tests validate against it).
+
 ## Non-negotiable rules
 - Strict phase gates: stop at each phase end, report (goal, decisions, files, verification actually performed, TBDs, next phase), wait for explicit owner approval.
 - Never overwrite files in `Documents/`. New deliverables go in `docs/`.

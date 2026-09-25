@@ -1,0 +1,64 @@
+name: wasselne-local
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-wasselne}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wasselne_local}
+      POSTGRES_DB: ${POSTGRES_DB:-wasselne}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - wasselne_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-wasselne}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - wasselne_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # minio/minio on Docker Hub now requires a paid login (policy change, 2024); bitnamilegacy is
+  # the free, unmaintained-but-functional mirror Bitnami left in place for exactly this case.
+  minio:
+    image: bitnamilegacy/minio:latest
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-wasselne}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-wasselne_local_key}
+      MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKET:-wasselne-local}
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - wasselne_minio:/bitnami/minio/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"
+      - "${MAILHOG_UI_PORT:-8025}:8025"
+
+volumes:
+  wasselne_postgres:
+  wasselne_redis:
+  wasselne_minio:

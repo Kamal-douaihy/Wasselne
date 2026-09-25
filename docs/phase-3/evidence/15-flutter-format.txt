@@ -1,0 +1,17 @@
+melos run format-check
+  └> melos exec -- dart format --output=none --set-exit-if-changed .
+     └> RUNNING
+
+$ melos exec
+  └> dart format --output=none --set-exit-if-changed .
+     └> RUNNING (in 3 packages)
+
+--------------------------------------------------------------------------------
+[driver]: Formatted 2 files (0 changed) in 0.01 seconds.
+[rider]: Formatted 2 files (0 changed) in 0.01 seconds.
+[flutter_core]: Formatted 12 files (0 changed) in 0.01 seconds.
+--------------------------------------------------------------------------------
+
+$ melos exec
+  └> dart format --output=none --set-exit-if-changed .
+     └> SUCCESS

@@ -136,6 +136,7 @@ paths:
         '201': { description: "Account created; session issued.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/SessionTokens' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }  # A-3-03: global per-IP ceiling (RATE_LIMITED)
   /auth/token/refresh:
     post:
       operationId: authTokenRefresh
@@ -164,6 +165,7 @@ paths:
       responses:
         '200': { description: "Profile.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/Profile' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }  # A-3-03: global per-IP ceiling (RATE_LIMITED)
     patch:
       operationId: meUpdate
       tags: [Me]
@@ -2715,6 +2717,8 @@ components:
         - IDEMPOTENCY_KEY_REUSED
         - PROVIDER_TEMPORARY_FAILURE
         - RATE_LIMITED
+        - NOT_FOUND          # Phase 3 amendment A-3-02: unknown route/resource (404)
+        - INTERNAL_ERROR     # Phase 3 amendment A-3-02: unhandled failure (500), no internals exposed
     Error:
       type: object
       required: [code, message, correlation_id]

@@ -1,0 +1,44 @@
+
+> wasselne@0.0.0 build
+> corepack pnpm -r run build
+
+Scope: 4 of 5 workspace projects
+apps/admin build$ next build
+apps/api build$ tsc -p tsconfig.json
+packages/design-tokens build$ npm run generate
+packages/contracts prebuild$ npm run generate
+packages/contracts prebuild: > @wasselne/contracts@0.0.0 generate
+packages/contracts prebuild: > openapi-typescript ../../docs/phase-2/openapi.yaml -o src/generated/openapi-types.ts
+packages/design-tokens build: > @wasselne/design-tokens@0.0.0 generate
+packages/design-tokens build: > tsx src/generate.ts
+packages/design-tokens build: Wrote dist/tokens.css and ../flutter_core/lib/theme/tokens.g.dart
+packages/contracts prebuild: ✨ openapi-typescript 7.13.0
+packages/design-tokens build: Done
+apps/admin build:    ▲ Next.js 15.5.26
+apps/admin build:    Creating an optimized production build ...
+packages/contracts prebuild: 🚀 ../../docs/phase-2/openapi.yaml → src/generated/openapi-types.ts [174.3ms]
+packages/contracts prebuild: Done
+packages/contracts build$ tsc -p tsconfig.json
+packages/contracts build: Done
+apps/api build: Done
+apps/admin build:  ✓ Compiled successfully in 824ms
+apps/admin build:    Linting and checking validity of types ...
+apps/admin build:    Collecting page data ...
+apps/admin build:    Generating static pages (0/5) ...
+apps/admin build:    Generating static pages (1/5) 
+apps/admin build:    Generating static pages (2/5) 
+apps/admin build:    Generating static pages (3/5) 
+apps/admin build:  ✓ Generating static pages (5/5)
+apps/admin build:    Finalizing page optimization ...
+apps/admin build:    Collecting build traces ...
+apps/admin build: Route (app)                                 Size  First Load JS
+apps/admin build: ┌ ○ /                                      131 B         102 kB
+apps/admin build: ├ ○ /_not-found                            993 B         103 kB
+apps/admin build: └ ƒ /status                                131 B         102 kB
+apps/admin build: + First Load JS shared by all             102 kB
+apps/admin build:   ├ chunks/284-09c95c237cf3be19.js       45.7 kB
+apps/admin build:   ├ chunks/80cc6813-0d3e7630ff9fb07b.js  54.2 kB
+apps/admin build:   └ other shared chunks (total)          1.88 kB
+apps/admin build: ○  (Static)   prerendered as static content
+apps/admin build: ƒ  (Dynamic)  server-rendered on demand
+apps/admin build: Done

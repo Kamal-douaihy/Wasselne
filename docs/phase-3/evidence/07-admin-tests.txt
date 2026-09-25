@@ -1,0 +1,15 @@
+
+> @wasselne/admin@0.0.0 test
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/kamaldouaihy/Documents/Projects/Wasselne/apps/admin
+
+ ✓ lib/env.spec.ts (2 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  01:24:18
+   Duration  155ms (transform 15ms, setup 0ms, collect 14ms, tests 2ms, environment 0ms, prepare 30ms)
+

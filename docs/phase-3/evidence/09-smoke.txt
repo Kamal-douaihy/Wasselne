@@ -1,0 +1,35 @@
+
+[1;36m==> Starting postgres and redis[0m
+ Container wasselne-local-redis-1 Running 
+ Container wasselne-local-postgres-1 Running 
+
+[1;36m==> Creating throwaway database wasselne_smoke_605ade2a[0m
+
+[1;36m==> Migrating and building[0m
+◇ injected env (6) from .env
+apply 017_reliability_plumbing.sql
+apply 018_seed_reference_data.sql
+apply 019_otp_challenge_app.sql
+
+[1;36m==> Starting the API on port 61047[0m
+
+[1;36m==> GET /health[0m
+{"status":"ok","checks":{"database":"ok","redis":"ok"}}
+
+[1;36m==> GET /v1/me without a token -> 401 NOT_AUTHENTICATED with correlation id[0m
+
+[1;36m==> POST /v1/auth/otp/request[0m
+{"challenge_id":"0e126320-a4c2-4a4c-bc54-e3d39eb0b86e","expires_at":"2026-09-24T21:29:22.373Z","resend_after":"2026-09-24T21:24:52.373Z"}
+
+[1;36m==> Immediate second request -> 429 OTP_RATE_LIMITED with Retry-After[0m
+
+[1;36m==> Wrong code -> 400 OTP_INVALID[0m
+
+[1;36m==> Reading the dev code from Redis (the API never returns it) and verifying[0m
+
+[1;36m==> POST /v1/me/complete-profile -> 201[0m
+
+[1;36m==> GET /v1/me with the issued token[0m
+{"id":"785a1803-741c-4498-84e3-83c850986dd6","phone_e164":"+96131018583","first_name":"Smoke","last_name":"Test","gender":"FEMALE","gender_confirmed":false,"email":null,"language":"ar","status":"ACTIVE"}
+
+[1;36m==> PASS: isolated database wasselne_smoke_605ade2a, port 61047, contract-shaped sign-in flow verified (dropped on exit)[0m

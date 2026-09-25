@@ -1,0 +1,27 @@
+name: wasselne_workspace
+publish_to: "none"
+
+environment:
+  sdk: ^3.13.4
+
+dev_dependencies:
+  melos: ^8.9.0
+
+workspace:
+  - apps/rider
+  - apps/driver
+  - packages/flutter_core
+
+melos:
+  scripts:
+    analyze:
+      run: melos exec -- flutter analyze
+      description: Static analysis across every Flutter app and package.
+
+    test:
+      run: melos exec -- flutter test
+      description: Unit and widget tests across every Flutter app and package.
+
+    format-check:
+      run: melos exec -- dart format --output=none --set-exit-if-changed .
+      description: Fails if any Dart file is not formatted.

@@ -1,0 +1,10 @@
+melos bootstrap
+  └> /Users/kamaldouaihy/Documents/Projects/Wasselne
+
+Running "flutter pub get" in workspace...
+  > SUCCESS
+
+Generating IntelliJ IDE files...
+  > SUCCESS
+
+ -> 3 packages bootstrapped

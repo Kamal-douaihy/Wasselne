@@ -1,0 +1,62 @@
+melos run analyze
+  └> melos exec -- flutter analyze
+     └> RUNNING
+
+$ melos exec
+  └> flutter analyze
+     └> RUNNING (in 3 packages)
+
+--------------------------------------------------------------------------------
+ERROR: ERROR: [driver]: Waiting for another flutter command to release the startup lock...
+
+
+ERROR: ERROR: [rider]: Waiting for another flutter command to release the startup lock...
+
+
+[flutter_core]: Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+[flutter_core]: Downloading packages...
+[flutter_core]:   flutter_riverpod 2.6.1 (3.4.3 available)
+[flutter_core]:   go_router 14.8.1 (18.0.1 available)
+[flutter_core]:   material_color_utilities 0.13.0 (0.13.1 available)
+[flutter_core]:   platform 3.1.6 (3.2.0 available)
+[flutter_core]:   riverpod 2.6.1 (3.4.3 available)
+[flutter_core]:   test_api 0.7.12 (0.7.14 available)
+[flutter_core]: Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+[flutter_core]: 6 packages have newer versions incompatible with dependency constraints.
+[flutter_core]: Try `flutter pub outdated` for more information.
+[rider]: Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+[rider]: Downloading packages...
+[flutter_core]: Analyzing flutter_core...                                       
+[rider]:   flutter_riverpod 2.6.1 (3.4.3 available)
+[rider]:   go_router 14.8.1 (18.0.1 available)
+[rider]:   material_color_utilities 0.13.0 (0.13.1 available)
+[rider]:   platform 3.1.6 (3.2.0 available)
+[rider]:   riverpod 2.6.1 (3.4.3 available)
+[rider]:   test_api 0.7.12 (0.7.14 available)
+[rider]: Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+[rider]: 6 packages have newer versions incompatible with dependency constraints.
+[rider]: Try `flutter pub outdated` for more information.
+[driver]: Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+[driver]: Downloading packages...
+[rider]: Analyzing rider...                                              
+[driver]:   flutter_riverpod 2.6.1 (3.4.3 available)
+[driver]:   go_router 14.8.1 (18.0.1 available)
+[driver]:   material_color_utilities 0.13.0 (0.13.1 available)
+[driver]:   platform 3.1.6 (3.2.0 available)
+[driver]:   riverpod 2.6.1 (3.4.3 available)
+[driver]:   test_api 0.7.12 (0.7.14 available)
+[driver]: Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+[driver]: 6 packages have newer versions incompatible with dependency constraints.
+[driver]: Try `flutter pub outdated` for more information.
+[driver]: Analyzing driver...                                             
+[flutter_core]: 
+[flutter_core]: No issues found! (ran in 4.3s)
+[rider]: 
+[rider]: No issues found! (ran in 4.1s)
+[driver]: 
+[driver]: No issues found! (ran in 4.0s)
+--------------------------------------------------------------------------------
+
+$ melos exec
+  └> flutter analyze
+     └> SUCCESS

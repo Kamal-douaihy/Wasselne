@@ -108,7 +108,8 @@ CREATE TABLE otp_challenges (
   attempts        smallint NOT NULL DEFAULT 0,
   expires_at      timestamptz NOT NULL,
   consumed_at     timestamptz,
-  created_at      timestamptz NOT NULL DEFAULT now()
+  created_at      timestamptz NOT NULL DEFAULT now(),
+  app             app_kind NOT NULL                  -- Phase 3 amendment A-3-01: verify carries no app, so the challenge records it
 );
 CREATE INDEX ON otp_challenges (phone_e164, created_at DESC);
 

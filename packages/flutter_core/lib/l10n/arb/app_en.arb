@@ -1,0 +1,12 @@
+{
+  "@@locale": "en",
+  "appTitleRider": "Wasselne",
+  "@appTitleRider": { "description": "Rider app title" },
+  "appTitleDriver": "Wasselne Driver",
+  "@appTitleDriver": { "description": "Driver app title" },
+  "systemStatus": "System status",
+  "@systemStatus": { "description": "Heading for the connectivity/health screen" },
+  "apiReachable": "API reachable",
+  "apiUnreachable": "Could not reach the API",
+  "checking": "Checking…"
+}

@@ -1,0 +1,66 @@
+melos run test
+  └> melos exec -- flutter test
+     └> RUNNING
+
+$ melos exec
+  └> flutter test
+     └> RUNNING (in 3 packages)
+
+--------------------------------------------------------------------------------
+ERROR: ERROR: [rider]: Waiting for another flutter command to release the startup lock...
+
+
+ERROR: ERROR: [driver]: Waiting for another flutter command to release the startup lock...
+
+
+[flutter_core]: Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+[flutter_core]: Downloading packages...
+[flutter_core]:   flutter_riverpod 2.6.1 (3.4.3 available)
+[flutter_core]:   go_router 14.8.1 (18.0.1 available)
+[flutter_core]:   material_color_utilities 0.13.0 (0.13.1 available)
+[flutter_core]:   platform 3.1.6 (3.2.0 available)
+[flutter_core]:   riverpod 2.6.1 (3.4.3 available)
+[flutter_core]:   test_api 0.7.12 (0.7.14 available)
+[flutter_core]: Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+[flutter_core]: 6 packages have newer versions incompatible with dependency constraints.
+[flutter_core]: Try `flutter pub outdated` for more information.
+[rider]: Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+[rider]: Downloading packages...
+[flutter_core]: 00:00 +0: loading /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/flutter_core_test.dart
+[rider]:   flutter_riverpod 2.6.1 (3.4.3 available)
+[rider]:   go_router 14.8.1 (18.0.1 available)
+[rider]:   material_color_utilities 0.13.0 (0.13.1 available)
+[rider]:   platform 3.1.6 (3.2.0 available)
+[rider]:   riverpod 2.6.1 (3.4.3 available)
+[rider]:   test_api 0.7.12 (0.7.14 available)
+[rider]: Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+[rider]: 6 packages have newer versions incompatible with dependency constraints.
+[rider]: Try `flutter pub outdated` for more information.
+[driver]: Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+[driver]: Downloading packages...
+[rider]: 00:00 +0: loading /Users/kamaldouaihy/Documents/Projects/Wasselne/apps/rider/test/widget_test.dart
+[flutter_core]: 00:00 +0: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/api_client_test.dart: requestOtp parses the contract response and sends no extra fields
+[flutter_core]: 00:00 +1: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/api_client_test.dart: verifyOtp sends only challenge_id and code, and understands NEEDS_PROFILE
+[flutter_core]: 00:00 +2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/api_client_test.dart: a 429 becomes an ApiException carrying code, correlation id and Retry-After
+[driver]:   flutter_riverpod 2.6.1 (3.4.3 available)
+[driver]:   go_router 14.8.1 (18.0.1 available)
+[driver]:   material_color_utilities 0.13.0 (0.13.1 available)
+[driver]:   platform 3.1.6 (3.2.0 available)
+[driver]:   riverpod 2.6.1 (3.4.3 available)
+[driver]:   test_api 0.7.12 (0.7.14 available)
+[driver]: Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+[driver]: 6 packages have newer versions incompatible with dependency constraints.
+[driver]: Try `flutter pub outdated` for more information.
+[flutter_core]: 00:00 +3: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/flutter_core_test.dart: ApiConfig defaults to localhost for local development
+[flutter_core]: 00:00 +4: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/flutter_core_test.dart: WasselneTheme builds distinct light and dark ThemeData
+[driver]: 00:00 +0: loading /Users/kamaldouaihy/Documents/Projects/Wasselne/apps/driver/test/widget_test.dart
+[flutter_core]: 00:00 +5: All tests passed!
+[rider]: 00:00 +0: renders the localized rider app title and the API status once loaded
+[rider]: 00:00 +1: All tests passed!
+[driver]: 00:00 +0: renders the localized driver app title and the API status once loaded
+[driver]: 00:00 +1: All tests passed!
+--------------------------------------------------------------------------------
+
+$ melos exec
+  └> flutter test
+     └> SUCCESS

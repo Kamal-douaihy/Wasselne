@@ -1,0 +1,22 @@
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 3.47.5, on macOS 15.6.1 24G90 darwin-arm64, locale en-GB)
+[✗] Android toolchain - develop for Android devices
+    ✗ Unable to locate Android SDK.
+      Install Android Studio from: https://developer.android.com/studio/index.html
+      On first launch it will assist you in installing the Android SDK components.
+      (or visit https://flutter.dev/to/macos-android-setup for detailed instructions).
+      If the Android SDK has been installed to a custom location, please use
+      `flutter config --android-sdk` to update to that location.
+
+[!] Xcode - develop for iOS and macOS (Xcode 16.4)
+    ! CocoaPods not installed.
+        CocoaPods is a package manager for iOS or macOS platform code.
+        Without CocoaPods, plugins will not work on iOS or macOS.
+        For more info, see https://flutter.dev/to/platform-plugins
+      For installation instructions, see https://guides.cocoapods.org/using/getting-started.html#installation
+[✗] Chrome - develop for the web (Cannot find Chrome executable at /Applications/Google Chrome.app/Contents/MacOS/Google Chrome)
+    ! Cannot find Chrome. Try setting CHROME_EXECUTABLE to a Chrome executable.
+[✓] Connected device (1 available)
+[✓] Network resources
+
+! Doctor found issues in 3 categories.

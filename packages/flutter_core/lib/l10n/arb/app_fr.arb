@@ -1,0 +1,9 @@
+{
+  "@@locale": "fr",
+  "appTitleRider": "Wasselne",
+  "appTitleDriver": "Wasselne Chauffeur",
+  "systemStatus": "État du système",
+  "apiReachable": "API accessible",
+  "apiUnreachable": "Impossible de joindre l'API",
+  "checking": "Vérification en cours…"
+}

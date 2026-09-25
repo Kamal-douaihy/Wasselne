@@ -1,0 +1,19 @@
+
+> wasselne@0.0.0 typecheck
+> corepack pnpm -r run typecheck
+
+Scope: 4 of 5 workspace projects
+apps/admin typecheck$ tsc --noEmit
+apps/api typecheck$ tsc -p tsconfig.json --noEmit
+packages/contracts pretypecheck$ npm run generate
+packages/design-tokens typecheck$ tsc -p tsconfig.json --noEmit
+packages/contracts pretypecheck: > @wasselne/contracts@0.0.0 generate
+packages/contracts pretypecheck: > openapi-typescript ../../docs/phase-2/openapi.yaml -o src/generated/openapi-types.ts
+apps/api typecheck: Done
+packages/design-tokens typecheck: Done
+apps/admin typecheck: Done
+packages/contracts pretypecheck: ✨ openapi-typescript 7.13.0
+packages/contracts pretypecheck: 🚀 ../../docs/phase-2/openapi.yaml → src/generated/openapi-types.ts [122.6ms]
+packages/contracts pretypecheck: Done
+packages/contracts typecheck$ tsc -p tsconfig.json --noEmit
+packages/contracts typecheck: Done

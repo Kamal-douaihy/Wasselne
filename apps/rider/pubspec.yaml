@@ -1,0 +1,25 @@
+name: rider
+description: "Wasselne rider app."
+publish_to: "none"
+version: 0.1.0+1
+
+resolution: workspace
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_core:
+    path: ../../packages/flutter_core
+  flutter_riverpod: ^2.6.1
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

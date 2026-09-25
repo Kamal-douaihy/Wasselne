@@ -1,0 +1,21 @@
+
+> @wasselne/api@0.0.0 db:check-schema
+> tsx src/db/check-schema.ts
+
+◇ injected env (12) from .env
+1) invariants on schema.sql (10 checks expected)
+  PASS: second outstanding offer for same ride -> 23505 duplicate key value violates unique constraint "one_outstanding_offer_per_ride"
+  PASS: second active ride for same rider -> 23505 duplicate key value violates unique constraint "one_active_ride_per_rider"
+  PASS: ACTIVE offer with window other than 3 s -> 23514 new row for relation "ride_offers" violates check constraint "ride_offers_check"
+  PASS: second open assignment for same ride -> 23505 duplicate key value violates unique constraint "one_open_assignment_per_ride"
+  PASS: duplicate ledger posting (same idempotency key) -> 23505 duplicate key value violates unique constraint "ledger_entries_idempotency_key_key"
+  PASS: edit ledger entry -> P0001 ledger_entries is append-only
+  PASS: delete ledger entry -> P0001 ledger_entries is append-only
+  PASS: enable payment method with no adapter -> 23514 new row for relation "payment_methods" violates check constraint "payment_methods_check"
+  PASS: edit ride event history -> P0001 ride_events is append-only
+  PASS: delete ride event history -> P0001 ride_events is append-only
+2) self-test: the gate must fail when an enforcing index is removed
+  gate correctly failed: FAIL: second outstanding offer for same ride (statement succeeded but must be rejected)
+3) migrations vs schema.sql structure
+  identical
+schema gate: OK

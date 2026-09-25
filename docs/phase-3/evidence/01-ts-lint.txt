@@ -1,0 +1,18 @@
+
+> wasselne@0.0.0 lint
+> corepack pnpm -r run lint
+
+Scope: 4 of 5 workspace projects
+apps/admin lint$ next lint
+apps/api lint$ eslint "src/**/*.ts"
+packages/contracts lint$ eslint "src/**/*.ts"
+packages/design-tokens lint$ eslint "src/**/*.ts"
+apps/admin lint: `next lint` is deprecated and will be removed in Next.js 16.
+apps/admin lint: For new projects, use create-next-app to choose your preferred linter.
+apps/admin lint: For existing projects, migrate to the ESLint CLI:
+apps/admin lint: npx @next/codemod@canary next-lint-to-eslint-cli .
+apps/api lint: Done
+packages/contracts lint: Done
+packages/design-tokens lint: Done
+apps/admin lint: ✔ No ESLint warnings or errors
+apps/admin lint: Done

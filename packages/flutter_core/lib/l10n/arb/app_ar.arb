@@ -1,0 +1,9 @@
+{
+  "@@locale": "ar",
+  "appTitleRider": "وصلني",
+  "appTitleDriver": "وصلني للسائق",
+  "systemStatus": "حالة النظام",
+  "apiReachable": "الاتصال بالخادم متاح",
+  "apiUnreachable": "تعذّر الوصول إلى الخادم",
+  "checking": "جارٍ التحقق…"
+}

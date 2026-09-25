@@ -1,0 +1,21 @@
+{
+  "name": "wasselne",
+  "private": true,
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=20.11 <23"
+  },
+  "packageManager": "pnpm@9.15.9",
+  "scripts": {
+    "lint": "corepack pnpm -r run lint",
+    "typecheck": "corepack pnpm -r run typecheck",
+    "build": "corepack pnpm -r run build",
+    "test": "corepack pnpm -r run test",
+    "infra:up": "docker compose -f infra/local/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/local/docker-compose.yml down",
+    "db:migrate": "corepack pnpm --filter=@wasselne/api run db:migrate",
+    "smoke": "bash scripts/smoke-test.sh",
+    "flutter:analyze": "melos run analyze",
+    "flutter:test": "melos run test"
+  }
+}

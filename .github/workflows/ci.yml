@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  typescript:
+    name: TypeScript (api, admin, contracts, design-tokens)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: wasselne
+          POSTGRES_PASSWORD: wasselne_ci
+          POSTGRES_DB: wasselne
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U wasselne"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgres://wasselne:wasselne_ci@localhost:5432/wasselne
+      REDIS_URL: redis://localhost:6379
+      JWT_ACCESS_SECRET: ci-only-access-secret-not-for-real-use-000000
+      SMS_ADAPTER: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - run: corepack enable
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - run: corepack pnpm install --frozen-lockfile
+
+      - name: Generate OpenAPI types and design tokens
+        run: |
+          corepack pnpm --filter @wasselne/contracts run generate
+          corepack pnpm --filter @wasselne/design-tokens run generate
+
+      - run: corepack pnpm run lint
+      - run: corepack pnpm run typecheck
+      - run: corepack pnpm run build
+
+      - name: Run database migrations
+        run: corepack pnpm run db:migrate
+
+      - name: Schema gate (invariants must be rejected by the database; migrations must equal schema.sql)
+        run: corepack pnpm --filter @wasselne/api run db:check-schema
+
+      - name: Unit + e2e tests (e2e uses its own throwaway database and Redis key prefix)
+        run: corepack pnpm run test
+
+  smoke:
+    name: Smoke test (isolated database)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - run: cp apps/api/.env.example apps/api/.env
+      - run: bash scripts/smoke-test.sh
+
+  flutter:
+    name: Flutter (rider, driver, flutter_core)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - name: Generate design tokens
+        run: corepack pnpm --filter @wasselne/design-tokens run generate
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Format the generated Dart tokens (generator output is not dart-formatted)
+        run: dart format packages/flutter_core/lib/theme/tokens.g.dart
+      - run: dart pub global activate melos
+      - run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+      - run: melos bootstrap
+      - run: melos run analyze
+      - run: melos run test
+      - run: melos run format-check
