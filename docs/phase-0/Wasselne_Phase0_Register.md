@@ -1,6 +1,6 @@
 # Wasselne — Phase 0 Register: Reconciled Scope, Decisions, and Open Items
 
-**Status:** **Phase 0 approved by owner, 2026-09-24.** Revision 7 (adds §10a: Phase 2 approval record and Phase 3 amendments). Not a design approval, not implementation.
+**Status:** **Phase 0 approved by owner, 2026-09-24.** Revision 8 (§10a now also records the Phase 3 approval and the Phase 4 amendments). Not a design approval, not implementation.
 **Date:** 2026-09-24
 **Sources:** BRS Word ed. 0.2, HLD Word ed. 0.2, LLD Word ed. 0.2, Architecture Diagrams Word ed. 0.2 (all dated 23 Sep 2026), and the owner's implementation prompt (`Documents/prompt-for-app.md`).
 
@@ -268,9 +268,9 @@ Each criterion must be demonstrated with evidence. Numeric values marked `TBD` a
 |---|---|---|
 | 0 | Reconcile discovery, lock scope | **Approved 2026-09-24** |
 | 1 | Experience design | **Approved 2026-09-24** (`docs/phase-1/`) |
-| 2 | Architecture, domain model, contracts | **Approved 2026-09-24** (owner instruction in session; baseline = commit `04e9761`). Amended by A-3-01..03 below, which the owner accepts or rejects with Phase 3 |
-| 3 | Repository and working foundation | **Delivered, awaiting owner approval** (`docs/phase-3/Phase3_Report.md`; not yet committed) |
-| 4 | Identity, onboarding, eligibility | Not started (blocked until Phase 3 is approved) |
+| 2 | Architecture, domain model, contracts | **Approved 2026-09-24** (owner instruction in session; baseline = commit `04e9761`). Amended by A-3-01..04 and A-4-01..10 below |
+| 3 | Repository and working foundation | **Approved 2026-09-25** (owner message "Aproved phase 3, proceed"; `docs/phase-3/Phase3_Report.md`; committed as `6d6b023`) |
+| 4 | Identity, onboarding, eligibility | **Delivered, awaiting owner approval** (`docs/phase-4/Phase4_Report.md`; not committed) |
 | 5 | Presence, locations, maps, saved places | Not started |
 | 6 | Fare quote, request, exclusive dispatch | Not started |
 | 7 | Trip lifecycle and navigation | Not started |
@@ -291,6 +291,29 @@ Each criterion must be demonstrated with evidence. Numeric values marked `TBD` a
 | A-3-02 | `openapi.yaml` `ErrorCode` | Added `NOT_FOUND` and `INTERNAL_ERROR` | The contract had no code for unknown routes (404) or unhandled failures (500). |
 | A-3-03 | `openapi.yaml` `/me`, `/me/complete-profile` | Declared `429` (`RateLimited`) | The global per-IP ceiling can answer `RATE_LIMITED` on any operation. Other operations get it when they are implemented. |
 | A-3-04 | `schema-invariants-test.sql` | Each check now states the expected SQLSTATE and raises on unexpected success | The old version only printed `FAIL` and could not fail a process. |
+
+**Phase 3 approval.** The owner wrote "Aproved phase 3, proceed" on 2026-09-25. Amendments A-3-01..04 were not listed separately; they are treated as accepted with Phase 3 unless the owner says otherwise. Phase 3 was then committed as `6d6b023`.
+
+**Amendments made to Phase 2 artifacts during Phase 4** (need owner acceptance with Phase 4; every one is additive except where noted):
+
+| ID | File | Change | Reason |
+|---|---|---|---|
+| A-4-01 | `schema.sql`, `db/migrations/020` | `sessions.previous_refresh_token_hash` (unique) | Reuse of a rotated refresh token must be detectable (architecture §6.1). |
+| A-4-02 | same | `admin_audit_log.actor_roles text[]` | The admin spec logs actor **and role** (03_Admin_Console §3.4). |
+| A-4-03 | same, `schema-invariants-test.sql` | Function `driver_ineligibility_reasons()` and trigger `ride_offers_eligibility` (SQLSTATE `WE001`); invariant fixtures now make the two fixture drivers eligible and three new checks were added | Approval/eligibility enforced by the database for every future offer. **This changes fixtures of an approved test file.** |
+| A-4-04 | same | Seed of the 9 `admin_roles` with permission strings | Role codes from Phase 1 matrix; strings are what the API enforces today. SUPPORT/SAFETY hold none until Phase 9. |
+| A-4-05 | `openapi.yaml` | `ErrorCode` + `INVALID_STATE`, `ONBOARDING_INCOMPLETE`; declared `403/409/422/404/429/400` on operations that can return them | The contract lacked them; the contract check in tests refuses undeclared statuses. |
+| A-4-06 | `openapi.yaml` | New operations `POST /admin/drivers/{id}/suspend`, `/reinstate`, `/gender-confirm` | APPROVED↔SUSPENDED (02_State_Machines §7) and D-35/D-39 for drivers had no endpoint. |
+| A-4-07 | `openapi.yaml` | `POST /admin/auth/logout` | Console sign-out must revoke server-side. |
+| A-4-08 | `openapi.yaml` | `GET /driver/onboarding/options` + `DriverOnboardingOptions` | The app must know which categories exist and what each requires; `/config/bootstrap` needs SOS and CMS values that do not exist yet. |
+| A-4-09 | `openapi.yaml` | `GET /legal/current` also accepts the `needs_profile_token` and a `language` query | The terms must be shown at sign-up, before an account exists. |
+| A-4-10 | `openapi.yaml` | `DriverOnboardingStatus.categories` (applied categories). Also extra response fields `document_type_code`/`document_type_names` on documents and `declared_gender`, `gender_confirmed`, `category_approvals` on admin driver detail (contract objects allow extra properties) | The apps and console need to list what each application requires. |
+| A-4-11 | `schema.sql`, new `db/migrations/021`, `schema-invariants-test.sql` | Function `vehicle_category_fit_reasons()` (base type, seats, `min_year`); `driver_ineligibility_reasons()` now reports `VEHICLE_CATEGORY_MISMATCH:<code>` and `VEHICLE_INACTIVE`; one new invariant (offer refused when the category needs more seats than the vehicle has) | Review finding H1: eligibility ignored seats and minimum year after selection or after a CMS change. |
+| A-4-12 | `schema.sql`, `db/migrations/021` | `uploads.staging_object_key` (unique, nullable); still-`AUTHORIZED` grants expired by the migration | Review finding H2: a presigned PUT stays usable after completion, so the reviewed object must live at a key no client can write. |
+
+**Phase 4 approval.** The owner wrote "approved phase 4, commit and push then start with phase 5" on 2026-09-26. Amendments A-4-01..12 are treated as accepted with Phase 4.
+
+Open items raised by Phase 4 (TBD-4-01..09) are listed in `docs/phase-4/Phase4_Report.md` §8.
 
 `scripts/split-schema.mjs` was deleted: `db/migrations/` is now the source of truth for new changes, and `db:check-schema` proves migrations and `schema.sql` describe the same structure.
 

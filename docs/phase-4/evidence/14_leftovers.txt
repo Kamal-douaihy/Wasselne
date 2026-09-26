@@ -1,0 +1,11 @@
+--- databases matching wasselne%:
+wasselne
+--- redis keys (test:* / e2e* / smoke*):
+0
+0
+0
+--- s3 objects under test/, e2eadmin/, e2edart/:
+◇ injected env (18) from .env
+test/ 0
+e2eadmin/ 0
+e2edart/ 0

@@ -7,7 +7,8 @@ import { ENV } from "../../config/env.module";
 import { Env } from "../../config/env";
 import { DB } from "../../db/db.module";
 import { Database } from "../../db/schema-types";
-import { CompleteProfileDto, RequestOtpDto, VerifyOtpDto } from "./dto";
+import { CompleteProfileDto, ProfileUpdateDto, RequestOtpDto, VerifyOtpDto } from "./dto";
+import { LegalService } from "./legal.service";
 import { AppKind, JwtService, NeedsProfileClaims } from "./jwt.service";
 import { generateOtpCode, generateRefreshToken, hashOtpCode, hashToken, verifyOtpCode } from "./otp.util";
 import { SMS_SENDER, SmsSender } from "./sms/sms-sender";
@@ -53,6 +54,7 @@ export class IdentityService {
     @Inject(ENV) private readonly env: Env,
     @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(SMS_SENDER) private readonly sms: SmsSender,
+    @Inject(LegalService) private readonly legal: LegalService,
   ) {}
 
   async requestOtp(dto: RequestOtpDto, ip: string): Promise<OtpRequestResponse> {
@@ -183,6 +185,14 @@ export class IdentityService {
       await trx.updateTable("otp_challenges").set({ consumed_at: sql`now()` as never }).where("id", "=", challenge.id).execute();
 
       if (account) {
+        if (challenge.app === "RIDER") {
+          // A driver-only account signing in to the rider app gets its rider profile on first use.
+          await trx
+            .insertInto("rider_profiles")
+            .values({ account_id: account.id, rating_avg_bp: null })
+            .onConflict((oc) => oc.column("account_id").doNothing())
+            .execute();
+        }
         const session = await this.createSession(trx, account.id, challenge.app);
         return { kind: "ok", response: { status: "SESSION", session, account_id: account.id } };
       }
@@ -209,18 +219,7 @@ export class IdentityService {
   async completeProfile(claims: NeedsProfileClaims, dto: CompleteProfileDto): Promise<SessionTokens> {
     try {
       return await this.db.transaction().execute(async (trx) => {
-        if (dto.accepted_legal_version_ids.length > 0) {
-          const found = await trx
-            .selectFrom("legal_document_versions")
-            .select("id")
-            .where("id", "in", dto.accepted_legal_version_ids)
-            .where("status", "=", "PUBLISHED")
-            .where(sql<boolean>`${claims.app}::app_kind = any(audience)`)
-            .execute();
-          if (found.length !== new Set(dto.accepted_legal_version_ids).size) {
-            throw new ApiError(400, "VALIDATION_FAILED", "Unknown or unpublished legal document version.");
-          }
-        }
+        await this.legal.assertAcceptedSetComplete(trx, claims.app, dto.accepted_legal_version_ids);
 
         const account = await trx
           .insertInto("accounts")
@@ -240,6 +239,11 @@ export class IdentityService {
 
         if (claims.app === "RIDER") {
           await trx.insertInto("rider_profiles").values({ account_id: account.id, rating_avg_bp: null }).execute();
+        } else {
+          await trx
+            .insertInto("driver_profiles")
+            .values({ account_id: account.id, status: "ONBOARDING", status_reason: null, submitted_at: null, decided_at: null, decided_by: null, current_vehicle_id: null, rating_avg_bp: null })
+            .execute();
         }
         for (const versionId of new Set(dto.accepted_legal_version_ids)) {
           await trx
@@ -277,6 +281,90 @@ export class IdentityService {
       ...(a.preferred_currency ? { preferred_currency: a.preferred_currency } : {}),
       status: a.status,
     };
+  }
+
+  /**
+   * Rotates the refresh token. The hash of the token just replaced is kept in
+   * previous_refresh_token_hash; presenting it again means the token leaked or was replayed, so
+   * the whole session is revoked (01_Architecture §6.1). A client that retries after a lost
+   * response therefore has to sign in again: that is the intended strictness.
+   */
+  async refresh(refreshToken: string): Promise<SessionTokens> {
+    const hash = hashToken(refreshToken);
+    type Outcome = { kind: "ok"; tokens: SessionTokens } | { kind: "invalid" };
+    const outcome = await this.db.transaction().execute(async (trx): Promise<Outcome> => {
+      const session = await trx
+        .selectFrom("sessions")
+        .select(["id", "account_id", "app", sql<boolean>`revoked_at is null and expires_at > now()`.as("live")])
+        .where("refresh_token_hash", "=", hash)
+        .forUpdate()
+        .executeTakeFirst();
+      if (!session) {
+        const reused = await trx
+          .updateTable("sessions")
+          .set({ revoked_at: sql`now()` as never, revoke_reason: "REFRESH_REUSE" })
+          .where("previous_refresh_token_hash", "=", hash)
+          .where("revoked_at", "is", null)
+          .executeTakeFirst();
+        if (reused.numUpdatedRows > 0n) this.logger.warn("refresh token reuse detected; session revoked");
+        return { kind: "invalid" };
+      }
+      if (!session.live) return { kind: "invalid" };
+
+      const account = await trx.selectFrom("accounts").select("status").where("id", "=", session.account_id).executeTakeFirst();
+      const blocked = await trx
+        .selectFrom("account_blocks")
+        .select("id")
+        .where("account_id", "=", session.account_id)
+        .where("lifted_at", "is", null)
+        .where("effective_at", "<=", sql`now()` as never)
+        .where(sql<boolean>`${session.app}::app_kind = any(applies_to)`)
+        .executeTakeFirst();
+      if (account?.status !== "ACTIVE" || blocked) {
+        await trx.updateTable("sessions").set({ revoked_at: sql`now()` as never, revoke_reason: "ACCOUNT_INACTIVE" }).where("id", "=", session.id).execute();
+        return { kind: "invalid" };
+      }
+
+      const next = generateRefreshToken();
+      const access = this.jwtService.signAccessToken({ sub: session.account_id, app: session.app, sid: session.id });
+      await trx
+        .updateTable("sessions")
+        .set({ refresh_token_hash: hashToken(next), previous_refresh_token_hash: hash, last_used_at: sql`now()` as never })
+        .where("id", "=", session.id)
+        .execute();
+      return { kind: "ok", tokens: { access_token: access.token, refresh_token: next, expires_at: access.expiresAt.toISOString() } };
+    });
+    if (outcome.kind !== "ok") throw new ApiError(401, "NOT_AUTHENTICATED", "Refresh token is not valid. Sign in again.");
+    return outcome.tokens;
+  }
+
+  /** Revokes the caller's own session; the refresh token must belong to that session. */
+  async logout(sessionId: string, accountId: string, refreshToken: string): Promise<void> {
+    const hash = hashToken(refreshToken);
+    const res = await this.db
+      .updateTable("sessions")
+      .set({ revoked_at: sql`now()` as never, revoke_reason: "LOGOUT" })
+      .where("id", "=", sessionId)
+      .where("account_id", "=", accountId)
+      .where("revoked_at", "is", null)
+      .where((eb) => eb.or([eb("refresh_token_hash", "=", hash), eb("previous_refresh_token_hash", "=", hash)]))
+      .executeTakeFirst();
+    if (res.numUpdatedRows === 0n) throw new ApiError(401, "NOT_AUTHENTICATED", "Refresh token does not belong to this session.");
+  }
+
+  async updateProfile(accountId: string, dto: ProfileUpdateDto) {
+    if (dto.preferred_currency) {
+      const cur = await this.db.selectFrom("currencies").select("code").where("code", "=", dto.preferred_currency).executeTakeFirst();
+      if (!cur) throw new ApiError(400, "VALIDATION_FAILED", "Unknown currency.", { issues: [{ path: "preferred_currency", message: "unknown currency" }] });
+    }
+    const patch: Record<string, unknown> = {};
+    for (const k of ["first_name", "last_name", "email", "language", "preferred_currency"] as const) {
+      if (dto[k] !== undefined) patch[k] = dto[k];
+    }
+    if (Object.keys(patch).length > 0) {
+      await this.db.updateTable("accounts").set(patch as never).where("id", "=", accountId).execute();
+    }
+    return this.getProfile(accountId);
   }
 
   // Runs inside the caller's transaction: the session row, the refresh token and the signed

@@ -27,3 +27,6 @@ infra/local/.env
 .idea/
 *.iml
 apps/api/test/support/.isolated-db.json
+apps/admin/app/tokens.generated.css
+apps/admin/test-results/
+apps/admin/playwright-report/

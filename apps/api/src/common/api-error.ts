@@ -1,7 +1,7 @@
 import { HttpException } from "@nestjs/common";
 
-// Codes from components/schemas/ErrorCode in docs/phase-2/openapi.yaml (plus the two Phase 3
-// amendments NOT_FOUND and INTERNAL_ERROR).
+// Codes from components/schemas/ErrorCode in docs/phase-2/openapi.yaml (plus the Phase 3 amendments
+// NOT_FOUND and INTERNAL_ERROR and the Phase 4 amendments INVALID_STATE, ONBOARDING_INCOMPLETE).
 export type ErrorCode =
   | "VALIDATION_FAILED"
   | "NOT_AUTHENTICATED"
@@ -12,6 +12,12 @@ export type ErrorCode =
   | "OTP_RATE_LIMITED"
   | "RATE_LIMITED"
   | "PROVIDER_TEMPORARY_FAILURE"
+  | "TERMS_ACCEPTANCE_REQUIRED"
+  | "CATEGORY_NOT_ELIGIBLE"
+  | "DRIVER_NOT_ELIGIBLE"
+  | "UPLOAD_INVALID"
+  | "INVALID_STATE"
+  | "ONBOARDING_INCOMPLETE"
   | "NOT_FOUND"
   | "INTERNAL_ERROR";
 

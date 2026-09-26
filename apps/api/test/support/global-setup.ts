@@ -18,9 +18,13 @@ export default async function globalSetup(): Promise<void> {
   await runMigrations(db.url);
   const redisPrefix = `test:${randomBytes(4).toString("hex")}:`;
 
+  // Uploaded test objects live under a per-run prefix so teardown can delete exactly them.
+  const s3Prefix = `test/${randomBytes(4).toString("hex")}/`;
+
   process.env.DATABASE_URL = db.url;
+  process.env.S3_KEY_PREFIX = s3Prefix;
   process.env.REDIS_KEY_PREFIX = redisPrefix;
   process.env.NODE_ENV = "test";
   process.env.SMS_ADAPTER = "dev";
-  writeFileSync(STATE_FILE, JSON.stringify({ name: db.name, serverUrl, redisPrefix }));
+  writeFileSync(STATE_FILE, JSON.stringify({ name: db.name, serverUrl, redisPrefix, s3Prefix }));
 }

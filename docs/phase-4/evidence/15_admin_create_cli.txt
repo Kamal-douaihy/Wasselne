@@ -1,0 +1,6 @@
+Manual check of `admin:create` against a throwaway database (created and dropped by the check):
+short password:  ADMIN_PASSWORD must be at least 12 characters.
+no password:     Usage: ADMIN_PASSWORD=... admin:create --email <email> --name <full name> --role <ROLE_CODE>
+unknown role:    Unknown role NOPE.
+valid run:       admin cli.check@example.test ready with role SUPER_ADMIN; MFA enrolment happens at first sign-in.   (email lower-cased)
+second run:      same message; one admin row, one role row, password_hash is argon2id, mfa_enrolled_at stays NULL

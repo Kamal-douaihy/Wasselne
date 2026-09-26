@@ -1,0 +1,22 @@
+
+> @wasselne/api@0.0.0 e2e:admin-console /Users/kamaldouaihy/Documents/Projects/Wasselne/apps/api
+> tsx scripts/admin-console-e2e.ts
+
+◇ injected env (18) from .env
+
+Running 11 tests using 1 worker
+
+  ✓   1 e2e/admin.spec.pw.ts:38:3 › admin console › signed-out visitors are sent to sign-in (288ms)
+  ✓   2 e2e/admin.spec.pw.ts:45:3 › admin console › pages carry anti-framing and no-store headers (55ms)
+  ✓   3 e2e/admin.spec.pw.ts:54:3 › admin console › a wrong password gives one generic message (324ms)
+  ✓   4 e2e/admin.spec.pw.ts:65:3 › admin console › first sign-in forces MFA enrolment: QR, key, 10 recovery codes, saved-confirmation gate (596ms)
+  ✓   5 e2e/admin.spec.pw.ts:94:3 › admin console › reviewer sees only the screens their role allows (142ms)
+  ✓   6 e2e/admin.spec.pw.ts:107:3 › admin console › reviewer approves each document and the driver; every action needs a reason (627ms)
+  ✓   7 e2e/admin.spec.pw.ts:145:3 › admin console › suspending and reinstating a driver from the console updates the status (332ms)
+  ✓   8 e2e/admin.spec.pw.ts:157:3 › admin console › CSRF: a state-changing call to the console's proxy without the custom header is refused (117ms)
+  ✓   9 e2e/admin.spec.pw.ts:170:3 › admin console › sign out ends the session on the server, not just in the browser (172ms)
+  ✓  10 e2e/admin.spec.pw.ts:182:3 › admin console › an auditor reads the audit trail of that review but cannot act on it (324ms)
+  ✓  11 e2e/admin.spec.pw.ts:197:3 › admin console › an auditor who calls the proxy directly is refused by the API, not just hidden in the UI (66ms)
+
+  11 passed (3.8s)
+exit=0

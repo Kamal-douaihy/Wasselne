@@ -13,6 +13,13 @@ INSERT INTO vehicles(id,driver_id,base_type,make,model,color,plate,seats) VALUES
  ('00000000-0000-0000-0000-0000000000b1','00000000-0000-0000-0000-00000000000b','CAR','Toyota','Corolla','White','B1',4),
  ('00000000-0000-0000-0000-0000000000c1','00000000-0000-0000-0000-00000000000c','CAR','Kia','Rio','Grey','C1',4);
 INSERT INTO vehicle_categories(id,code,names,base_type,seats,icon) VALUES ('00000000-0000-0000-0000-0000000000ca','car','{"en":"Car"}','CAR',4,'local_taxi');
+-- Phase 4 (A-4-03): offers require an eligible driver, so the fixture drivers are made eligible.
+UPDATE driver_profiles SET current_vehicle_id='00000000-0000-0000-0000-0000000000b1' WHERE account_id='00000000-0000-0000-0000-00000000000b';
+UPDATE driver_profiles SET current_vehicle_id='00000000-0000-0000-0000-0000000000c1' WHERE account_id='00000000-0000-0000-0000-00000000000c';
+UPDATE vehicle_categories SET active=true WHERE id='00000000-0000-0000-0000-0000000000ca';
+INSERT INTO driver_category_approvals(driver_id,category_id,vehicle_id,status) VALUES
+ ('00000000-0000-0000-0000-00000000000b','00000000-0000-0000-0000-0000000000ca','00000000-0000-0000-0000-0000000000b1','APPROVED'),
+ ('00000000-0000-0000-0000-00000000000c','00000000-0000-0000-0000-0000000000ca','00000000-0000-0000-0000-0000000000c1','APPROVED');
 INSERT INTO service_zones(id,code,name) VALUES ('00000000-0000-0000-0000-0000000000e1','beirut','Beirut');
 INSERT INTO platform_settings_versions(id,settings,status,effective_at,published_by) VALUES ('00000000-0000-0000-0000-0000000000e5','{}','PUBLISHED',now(),'00000000-0000-0000-0000-00000000000a');
 INSERT INTO quotes(id,rider_id,category_id,zone_id,pickup,dropoff,route_distance_m,route_duration_s,settings_version_id,expires_at) VALUES
@@ -65,3 +72,21 @@ SELECT expect_fail('enable payment method with no adapter', $$UPDATE payment_met
 INSERT INTO ride_events(ride_id,ride_version,to_status,actor_role) VALUES ('00000000-0000-0000-0000-0000000000d1',1,'SEARCHING','RIDER');
 SELECT expect_fail('edit ride event history', $$UPDATE ride_events SET reason='x'$$, 'P0001');
 SELECT expect_fail('delete ride event history', $$DELETE FROM ride_events$$, 'P0001');
+-- Phase 4 (A-4-03): eligibility is enforced for every new outstanding offer.
+UPDATE ride_offers SET state='CANCELLED', resolved_at=now(), end_reason='RIDE_CANCELLED' WHERE state IN ('PENDING_ACK','ACTIVE');
+UPDATE driver_profiles SET status='SUSPENDED' WHERE account_id='00000000-0000-0000-0000-00000000000c';
+SELECT expect_fail('offer to a suspended driver',
+ $$INSERT INTO ride_offers(ride_id,driver_id,vehicle_id,attempt_no,driver_attempt_no,ack_deadline_at) VALUES ('00000000-0000-0000-0000-0000000000d1','00000000-0000-0000-0000-00000000000c','00000000-0000-0000-0000-0000000000c1',9,1,now())$$, 'WE001');
+UPDATE driver_profiles SET status='APPROVED' WHERE account_id='00000000-0000-0000-0000-00000000000c';
+UPDATE driver_category_approvals SET status='PENDING' WHERE driver_id='00000000-0000-0000-0000-00000000000c';
+SELECT expect_fail('offer to a driver whose category is not approved',
+ $$INSERT INTO ride_offers(ride_id,driver_id,vehicle_id,attempt_no,driver_attempt_no,ack_deadline_at) VALUES ('00000000-0000-0000-0000-0000000000d1','00000000-0000-0000-0000-00000000000c','00000000-0000-0000-0000-0000000000c1',9,1,now())$$, 'WE001');
+UPDATE driver_category_approvals SET status='APPROVED' WHERE driver_id='00000000-0000-0000-0000-00000000000c';
+-- Phase 4 (A-4-11): the vehicle must still fit the category's current seats and minimum year.
+UPDATE vehicle_categories SET seats = seats + 50 WHERE id = (SELECT category_id FROM rides WHERE id='00000000-0000-0000-0000-0000000000d1');
+SELECT expect_fail('offer when the category now needs more seats than the vehicle has',
+ $$INSERT INTO ride_offers(ride_id,driver_id,vehicle_id,attempt_no,driver_attempt_no,ack_deadline_at) VALUES ('00000000-0000-0000-0000-0000000000d1','00000000-0000-0000-0000-00000000000c','00000000-0000-0000-0000-0000000000c1',9,1,now())$$, 'WE001');
+UPDATE vehicle_categories SET seats = seats - 50 WHERE id = (SELECT category_id FROM rides WHERE id='00000000-0000-0000-0000-0000000000d1');
+INSERT INTO account_blocks(account_id,applies_to,reason,created_by,effective_at) VALUES ('00000000-0000-0000-0000-00000000000c','{DRIVER}','x','00000000-0000-0000-0000-00000000000a',now());
+SELECT expect_fail('offer to a blocked driver',
+ $$INSERT INTO ride_offers(ride_id,driver_id,vehicle_id,attempt_no,driver_attempt_no,ack_deadline_at) VALUES ('00000000-0000-0000-0000-0000000000d1','00000000-0000-0000-0000-00000000000c','00000000-0000-0000-0000-0000000000c1',9,1,now())$$, 'WE001');

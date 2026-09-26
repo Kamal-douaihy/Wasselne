@@ -155,6 +155,7 @@ paths:
       summary: "Revoke the current refresh token and its session."
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/LogoutBody' } } } }
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '204': { description: "Session revoked.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
   /me:
@@ -163,6 +164,7 @@ paths:
       tags: [Me]
       summary: "Own profile."
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '200': { description: "Profile.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/Profile' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '429': { $ref: '#/components/responses/RateLimited' }  # A-3-03: global per-IP ceiling (RATE_LIMITED)
@@ -172,6 +174,7 @@ paths:
       summary: "Update language, preferred currency, name, or email."
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/ProfileUpdateBody' } } } }
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '200': { description: "Updated profile.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/Profile' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -188,9 +191,12 @@ paths:
     get:
       operationId: legalCurrent
       tags: [Legal]
-      summary: "Current legal documents for the caller's app and language."
+      summary: "Current legal documents for the caller's app and language. Also accepts the needs_profile_token (Phase 4 amendment A-4-09) so the terms can be shown at sign-up, before an account exists; then `language` picks the text."
+      parameters: [ { name: language, in: query, required: false, schema: { type: string, enum: [ar, en, fr] } } ]
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '200': { description: "Legal documents.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/LegalDocument' } } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }  # A-4-09
         '401': { $ref: '#/components/responses/Unauthorized' }
   /legal/{versionId}/accept:
     post:
@@ -200,6 +206,7 @@ paths:
       parameters: [ { $ref: '#/components/parameters/VersionId' } ]
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/LegalAcceptBody' } } } }
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '204': { description: "Accepted.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
@@ -210,6 +217,7 @@ paths:
       summary: "Register (or re-register) a push notification device token."
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/PushDeviceRegisterBody' } } } }
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '201': { description: "Registered.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -220,6 +228,7 @@ paths:
       summary: "Unregister a push device token."
       parameters: [ { $ref: '#/components/parameters/PushDeviceId' } ]
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '204': { description: "Unregistered.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
@@ -230,6 +239,8 @@ paths:
       summary: "Authorize a direct-to-storage upload; returns a presigned PUT URL."
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/UploadAuthorizeBody' } } } }
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
+        '429': { $ref: '#/components/responses/RateLimited' }  # A-4-05
         '201': { description: "Upload grant issued.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/UploadAuthorizeResponse' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -240,6 +251,7 @@ paths:
       summary: "Confirm the object was uploaded; server validates size/type and scans it."
       parameters: [ { $ref: '#/components/parameters/UploadId' } ]
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '200': { description: "Upload status.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/UploadCompleteResponse' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
@@ -572,6 +584,8 @@ paths:
       summary: "Save driver personal details and legal acceptance. Progress is saved after each step."
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DriverOnboardingProfileBody' } } } }
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Saved.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverOnboardingStatus' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -582,6 +596,8 @@ paths:
       summary: "Save vehicle details."
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DriverVehicleBody' } } } }
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Saved.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverOnboardingStatus' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -592,6 +608,9 @@ paths:
       summary: "Select ride categories to request; adds their required documents to the checklist."
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DriverCategoriesRequestBody' } } } }
       responses:
+        '404': { $ref: '#/components/responses/NotFound' }  # A-4-05
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }  # A-4-05
         '200': { description: "Saved.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverOnboardingStatus' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -603,6 +622,8 @@ paths:
       summary: "Attach an uploaded document to the checklist."
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DriverDocumentAttachBody' } } } }
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '201': { description: "Attached.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverDocument' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -612,16 +633,28 @@ paths:
       tags: [Driver Onboarding]
       summary: "Submit for review once every required item is uploaded."
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '200': { description: "Submitted (status SUBMITTED).", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverOnboardingStatus' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '409': { $ref: '#/components/responses/Conflict' }
         '422': { $ref: '#/components/responses/UnprocessableEntity' }
+  /driver/onboarding/options:   # Phase 4 amendment A-4-08 (the app must know which categories exist and what each requires)
+    get:
+      operationId: driverOnboardingOptions
+      tags: [Driver Onboarding]
+      summary: "Active categories a driver can apply for, with each category's required documents (CMS data, D-24)."
+      responses:
+        '200': { description: "Options.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverOnboardingOptions' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
   /driver/onboarding/status:
     get:
       operationId: driverOnboardingStatusGet
       tags: [Driver Onboarding]
       summary: "Onboarding checklist and review status."
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
+        '404': { $ref: '#/components/responses/NotFound' }  # A-4-05
         '200': { description: "Status.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverOnboardingStatus' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
   /driver/state:
@@ -979,6 +1012,7 @@ paths:
       tags: [Driver Documents]
       summary: "All documents with status and expiry."
       responses:
+        '403': { $ref: '#/components/responses/Forbidden' }  # A-4-05
         '200': { description: "Documents.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/DriverDocument' } } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
   /driver/earnings/summary:
@@ -1002,6 +1036,15 @@ paths:
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '429': { $ref: '#/components/responses/RateLimited' }
+  /admin/auth/logout:   # Phase 4 amendment A-4-07 (the console needs to revoke its own session server-side)
+    post:
+      operationId: adminAuthLogout
+      tags: [Admin Auth]
+      summary: "Revoke the current admin session."
+      security: [ { adminBearer: [] } ]
+      responses:
+        '204': { description: "Session revoked.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
   /admin/auth/mfa/verify:
     post:
       operationId: adminAuthMfaVerify
@@ -1022,6 +1065,7 @@ paths:
       security: []
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/AdminMfaRecoveryBody' } } } }
       responses:
+        '429': { $ref: '#/components/responses/RateLimited' }  # A-4-05
         '200': { description: "Admin session.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/AdminSession' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -1032,6 +1076,7 @@ paths:
       summary: "Begin MFA enrolment: QR + manual key + one-time recovery codes (shown once)."
       security: [ { adminBearer: [] } ]
       responses:
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Enrolment material.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/AdminMfaEnrolResponse' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
   /admin/auth/mfa/confirm:
@@ -1042,6 +1087,7 @@ paths:
       security: [ { adminBearer: [] } ]
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/AdminMfaConfirmBody' } } } }
       responses:
+        '429': { $ref: '#/components/responses/RateLimited' }  # A-4-05
         '204': { description: "Enrolled.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -1116,6 +1162,7 @@ paths:
       security: [ { adminBearer: [] } ]
       parameters: [ { name: q, in: query, schema: { type: string } }, { $ref: '#/components/parameters/Cursor' }, { $ref: '#/components/parameters/Limit' } ]
       responses:
+        '400': { $ref: '#/components/responses/BadRequest' }  # A-4-05
         '200': { description: "Riders.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/AdminRiderListResponse' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
@@ -1140,6 +1187,7 @@ paths:
       parameters: [ { $ref: '#/components/parameters/AccountId' } ]
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/GenderConfirmBody' } } } }
       responses:
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Confirmed.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -1181,6 +1229,7 @@ paths:
       security: [ { adminBearer: [] } ]
       parameters: [ { name: q, in: query, schema: { type: string } }, { $ref: '#/components/parameters/Cursor' }, { $ref: '#/components/parameters/Limit' } ]
       responses:
+        '400': { $ref: '#/components/responses/BadRequest' }  # A-4-05
         '200': { description: "Drivers.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/AdminDriverListResponse' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
@@ -1205,6 +1254,7 @@ paths:
       parameters: [ { $ref: '#/components/parameters/AccountId' } ]
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DriverCategoryEditBody' } } } }
       responses:
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Updated.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -1238,6 +1288,50 @@ paths:
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
         '404': { $ref: '#/components/responses/NotFound' }
+  /admin/drivers/{id}/gender-confirm:   # Phase 4 amendment A-4-06 (drivers need the D-39 confirmation for women-only categories)
+    post:
+      operationId: adminDriverGenderConfirm
+      tags: [Admin People]
+      summary: "Confirm a driver's gender (management action, D-39). Required before a women-only category can be approved."
+      security: [ { adminBearer: [] } ]
+      parameters: [ { $ref: '#/components/parameters/AccountId' } ]
+      requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/GenderConfirmBody' } } } }
+      responses:
+        '200': { description: "Confirmed.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /admin/drivers/{id}/suspend:   # Phase 4 amendment A-4-06 (APPROVED -> SUSPENDED, 02_State_Machines §7)
+    post:
+      operationId: adminDriverSuspend
+      tags: [Admin People]
+      summary: "Suspend an approved driver: no new offers. Never interrupts a trip in progress."
+      security: [ { adminBearer: [] } ]
+      parameters: [ { $ref: '#/components/parameters/AccountId' } ]
+      requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DriverApprovalDecisionBody' } } } }
+      responses:
+        '200': { description: "Suspended.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /admin/drivers/{id}/reinstate:   # Phase 4 amendment A-4-06 (SUSPENDED -> APPROVED)
+    post:
+      operationId: adminDriverReinstate
+      tags: [Admin People]
+      summary: "Reinstate a suspended driver."
+      security: [ { adminBearer: [] } ]
+      parameters: [ { $ref: '#/components/parameters/AccountId' } ]
+      requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DriverApprovalDecisionBody' } } } }
+      responses:
+        '200': { description: "Reinstated.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
   /admin/driver-approvals:
     get:
       operationId: adminApprovalQueueList
@@ -1251,6 +1345,7 @@ paths:
         - { $ref: '#/components/parameters/Cursor' }
         - { $ref: '#/components/parameters/Limit' }
       responses:
+        '400': { $ref: '#/components/responses/BadRequest' }  # A-4-05
         '200': { description: "Queue.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/ApprovalQueueResponse' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
@@ -1275,6 +1370,7 @@ paths:
       parameters: [ { $ref: '#/components/parameters/AccountId' }, { name: documentId, in: path, required: true, schema: { type: string, format: uuid } } ]
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DocumentDecisionBody' } } } }
       responses:
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Approved.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverDocument' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -1289,6 +1385,7 @@ paths:
       parameters: [ { $ref: '#/components/parameters/AccountId' }, { name: documentId, in: path, required: true, schema: { type: string, format: uuid } } ]
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DocumentDecisionBody' } } } }
       responses:
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Rejected.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverDocument' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -1303,6 +1400,7 @@ paths:
       parameters: [ { $ref: '#/components/parameters/AccountId' }, { name: documentId, in: path, required: true, schema: { type: string, format: uuid } } ]
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DocumentDecisionBody' } } } }
       responses:
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Requested.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/DriverDocument' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -1332,6 +1430,7 @@ paths:
       parameters: [ { $ref: '#/components/parameters/AccountId' } ]
       requestBody: { content: { application/json: { schema: { $ref: '#/components/schemas/DriverApprovalDecisionBody' } } } }
       responses:
+        '409': { $ref: '#/components/responses/Conflict' }  # A-4-05
         '200': { description: "Rejected.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } } }
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
@@ -2383,6 +2482,7 @@ paths:
         - { $ref: '#/components/parameters/Cursor' }
         - { $ref: '#/components/parameters/Limit' }
       responses:
+        '400': { $ref: '#/components/responses/BadRequest' }  # A-4-05
         '200': { description: "Audit entries.", headers: { X-Correlation-Id: { $ref: '#/components/headers/X-Correlation-Id' } }, content: { application/json: { schema: { $ref: '#/components/schemas/AuditLogListResponse' } } } }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
@@ -2719,6 +2819,8 @@ components:
         - RATE_LIMITED
         - NOT_FOUND          # Phase 3 amendment A-3-02: unknown route/resource (404)
         - INTERNAL_ERROR     # Phase 3 amendment A-3-02: unhandled failure (500), no internals exposed
+        - INVALID_STATE      # Phase 4 amendment A-4-05: action not allowed in the object's current state (409)
+        - ONBOARDING_INCOMPLETE # Phase 4 amendment A-4-05: application missing required steps (422), details.missing lists them
     Error:
       type: object
       required: [code, message, correlation_id]
@@ -3257,6 +3359,35 @@ components:
     DriverStatus:
       type: string
       enum: [ONBOARDING, SUBMITTED, NEEDS_CHANGES, APPROVED, REJECTED, SUSPENDED]
+    DriverOnboardingOptions:   # Phase 4 amendment A-4-08
+      type: object
+      required: [categories]
+      properties:
+        categories:
+          type: array
+          items:
+            type: object
+            required: [id, code, names, base_type, seats, female_drivers_only, required_documents]
+            properties:
+              id: { type: string, format: uuid }
+              code: { type: string }
+              names: { $ref: '#/components/schemas/LocalizedText' }
+              base_type: { type: string, enum: [CAR, MOTORCYCLE, TUKTUK] }
+              seats: { type: integer }
+              female_drivers_only: { type: boolean }
+              min_vehicle_year: { type: integer, nullable: true }
+              required_documents:
+                type: array
+                items:
+                  type: object
+                  required: [document_type_id, code, names, subject, has_expiry]
+                  properties:
+                    document_type_id: { type: string, format: uuid }
+                    code: { type: string }
+                    names: { $ref: '#/components/schemas/LocalizedText' }
+                    subject: { type: string, enum: [DRIVER, VEHICLE] }
+                    has_expiry: { type: boolean }
+                    allow_gallery: { type: boolean }
     DriverOnboardingStatus:
       type: object
       required: [status, checklist]
@@ -3273,6 +3404,15 @@ components:
             documents_complete: { type: boolean }
             documents_total: { type: integer }
             documents_done: { type: integer }
+        categories:   # Phase 4 amendment A-4-10: the categories applied for, so the app can list what each requires
+          type: array
+          items:
+            type: object
+            required: [category_id, status]
+            properties:
+              category_id: { type: string, format: uuid }
+              status: { type: string, enum: [PENDING, APPROVED, REJECTED, PAUSED_BY_DRIVER] }
+              reason: { type: string, nullable: true }
         documents:
           type: array
           items: { $ref: '#/components/schemas/DriverDocument' }

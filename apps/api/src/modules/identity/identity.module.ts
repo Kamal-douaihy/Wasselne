@@ -3,20 +3,24 @@ import { ENV } from "../../config/env.module";
 import { Env } from "../../config/env";
 import { REDIS } from "../../redis/redis.module";
 import type Redis from "ioredis";
-import { JwtAuthGuard, NeedsProfileGuard } from "./auth.guard";
+import { AccessOrNeedsProfileGuard, JwtAuthGuard, NeedsProfileGuard } from "./auth.guard";
 import { IdentityService } from "./identity.service";
 import { JwtService } from "./jwt.service";
+import { LegalService } from "./legal.service";
 import { MeController } from "./me.controller";
 import { OtpController } from "./otp.controller";
+import { SessionController } from "./session.controller";
 import { DevSmsSender, DisabledSmsSender, SMS_SENDER } from "./sms/sms-sender";
 
 @Module({
-  controllers: [OtpController, MeController],
+  controllers: [OtpController, SessionController, MeController],
   providers: [
     IdentityService,
     JwtService,
+    LegalService,
     JwtAuthGuard,
     NeedsProfileGuard,
+    AccessOrNeedsProfileGuard,
     {
       provide: SMS_SENDER,
       useFactory: (env: Env, redis: Redis) =>
@@ -24,5 +28,6 @@ import { DevSmsSender, DisabledSmsSender, SMS_SENDER } from "./sms/sms-sender";
       inject: [ENV, REDIS],
     },
   ],
+  exports: [JwtService, JwtAuthGuard, LegalService],
 })
 export class IdentityModule {}

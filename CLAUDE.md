@@ -10,7 +10,7 @@ On-demand rides in Lebanon: **Wasselne** rider app + **Wasselne Driver** app (Fl
 - `Documents/prompt-for-app.md` defines Phases 0–11 and working rules.
 
 ## Current status (keep updated at every phase gate)
-Phases 0–2 approved. **Phase 3 delivered, awaiting owner approval** (`docs/phase-3/Phase3_Report.md`). Phase 4 must not start until Phase 3 is approved. Phases 5–11 are future work.
+Phases 0–4 approved (Phase 4 on 2026-09-26; amendments A-4-01..12 accepted with it). **Phase 5 in progress** (see `docs/phase-5/` once written). Phases 6–11 are future work. Phase 4 is committed and pushed.
 Code layout and run instructions: `README.md`. API contract: `docs/phase-2/openapi.yaml` (tests validate against it).
 
 ## Non-negotiable rules

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/api_client.dart';
+import '../auth/token_store.dart';
 import '../l10n/generated/app_localizations.dart';
 
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
+/// Real apps keep the session in the platform keystore; tests override this provider.
+final apiClientProvider = Provider<ApiClient>(
+  (ref) => ApiClient(tokenStore: SecureTokenStore()),
+);
 
 final healthProvider = FutureProvider<HealthReport>(
   (ref) => ref.watch(apiClientProvider).getHealth(),

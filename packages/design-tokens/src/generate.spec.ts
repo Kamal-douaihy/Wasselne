@@ -16,6 +16,10 @@ describe("design token generation", () => {
   it("resolves every {ns.key} reference in the generated CSS", () => {
     const css = readFileSync(join(packageDir, "dist/tokens.css"), "utf8");
     expect(css).not.toMatch(/\{[\w-]+\.[\w-]+\}/);
+    // every declaration ends at its own ";" (prose values are quoted), so PostCSS can parse the file
+    for (const line of css.split("\n").filter((l) => l.startsWith("  --"))) {
+      expect(line.replace(/"(?:[^"\\]|\\.)*"/g, '""').match(/;/g)?.length).toBe(1);
+    }
     expect(css).toMatch(/--wsl-color-brand-cedar-500: #0B6E4F;/);
     expect(css).toMatch(/--wsl-light-primary: #0B6E4F;/);
     expect(css).toMatch(/--wsl-dark-primary: #5FB08F;/);

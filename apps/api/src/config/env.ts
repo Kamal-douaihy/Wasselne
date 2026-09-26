@@ -27,6 +27,27 @@ const envSchema = z.object({
 
   // dev: the code is stored in Redis for local tools/tests to read (never returned by the API).
   // disabled: no SMS provider is configured; OTP requests answer 503 PROVIDER_TEMPORARY_FAILURE.
+  // Private S3-compatible storage (MinIO locally). S3_PUBLIC_ENDPOINT is the host devices use in
+  // presigned URLs when it differs from the one the API uses (e.g. Android emulator 10.0.2.2).
+  S3_ENDPOINT: z.string().url().default("http://localhost:9000"),
+  S3_PUBLIC_ENDPOINT: z.string().url().optional(),
+  S3_REGION: z.string().default("us-east-1"),
+  S3_BUCKET: z.string().default("wasselne-local"),
+  S3_ACCESS_KEY: z.string().default("wasselne"),
+  S3_SECRET_KEY: z.string().default("wasselne_local_key"),
+  S3_KEY_PREFIX: z.string().default(""),
+  UPLOAD_GRANT_TTL_S: z.coerce.number().int().positive().default(600),
+  DOWNLOAD_URL_TTL_S: z.coerce.number().int().positive().default(120),
+
+  // Admin console. ADMIN_TOTP_ENC_KEY: 32 bytes as 64 hex chars (encrypts TOTP secrets at rest).
+  ADMIN_TOTP_ENC_KEY: z.string().regex(/^[0-9a-fA-F]{64}$/, "ADMIN_TOTP_ENC_KEY must be 64 hex chars"),
+  ADMIN_SESSION_IDLE_TTL_S: z.coerce.number().int().positive().default(8 * 60 * 60),
+  ADMIN_MFA_TOKEN_TTL_S: z.coerce.number().int().positive().default(5 * 60),
+  ADMIN_LOGIN_LIMIT_PER_IP_PER_15MIN: z.coerce.number().int().positive().default(20),
+  ADMIN_LOGIN_LIMIT_PER_EMAIL_PER_15MIN: z.coerce.number().int().positive().default(8),
+  ADMIN_MFA_MAX_ATTEMPTS_PER_15MIN: z.coerce.number().int().positive().default(6),
+  ADMIN_TOTP_ISSUER: z.string().default("Wasselne Admin"),
+
   SMS_ADAPTER: z.enum(["dev", "disabled"]).default("dev"),
 });
 

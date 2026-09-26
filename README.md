@@ -45,7 +45,7 @@ pnpm --filter @wasselne/design-tokens run generate       # writes packages/flutt
 melos bootstrap                                          # Flutter/Dart workspace (also runs gen-l10n)
 
 cp infra/local/.env.example infra/local/.env
-cp apps/api/.env.example apps/api/.env                   # dev-only secrets; never use these in production
+cp apps/api/.env.example apps/api/.env                   # dev-only secrets (incl. ADMIN_TOTP_ENC_KEY, S3 keys); never use these in production
 pnpm infra:up                                             # postgres, redis, minio, mailhog
 pnpm db:migrate
 ```
@@ -60,6 +60,10 @@ above must run before `apps/rider` or `apps/driver` will build.
 pnpm --filter @wasselne/api run dev:api        # HTTP API, http://localhost:3000
 pnpm --filter @wasselne/api run dev:worker      # background worker process
 pnpm --filter @wasselne/admin run dev           # admin console, http://localhost:3001 (the API owns 3000)
+
+# first admin (there is no default login; MFA is enrolled at first sign-in):
+ADMIN_PASSWORD='choose-a-long-password' pnpm --filter @wasselne/api run admin:create -- \
+  --email you@example.test --name "Your Name" --role SUPER_ADMIN
 cd apps/rider && flutter run -d chrome          # or any connected device/simulator
 cd apps/driver && flutter run -d chrome
 ```
@@ -72,6 +76,9 @@ pnpm test                # TS unit + e2e tests. Needs `pnpm infra:up` (postgres+
 pnpm --filter @wasselne/api run db:check-schema   # schema invariants + migrations==schema.sql gate
 pnpm flutter:test         # Flutter unit/widget tests across rider, driver, flutter_core
 pnpm flutter:analyze      # Flutter static analysis
+pnpm --filter @wasselne/api run e2e:admin-console   # admin console in real Chromium against a throwaway API/DB/Redis/MinIO
+                          # (needs infra up and `pnpm --filter @wasselne/admin build`; first time: `pnpm --filter @wasselne/admin exec playwright install chromium`)
+pnpm --filter @wasselne/api run e2e:dart-client     # the real Dart ApiClient against a throwaway API (needs infra up)
 pnpm run smoke            # scripts/smoke-test.sh: throwaway database + free port; OTP sign-in ->
                            # complete-profile -> /v1/me plus error/429 shapes. Your dev data is untouched.
 ```
@@ -91,5 +98,7 @@ pnpm run smoke            # scripts/smoke-test.sh: throwaway database + free por
   response's status, body and required headers against it. `/health` is an operational endpoint
   outside that contract. In dev the OTP code is never returned by the API: the dev SMS adapter
   writes it to Redis (`<REDIS_KEY_PREFIX>dev:sms:<challenge_id>`).
+- The API's private object store is MinIO locally (`S3_*` in `apps/api/.env`); test runs write under a per-run key prefix and delete it. The e2e suites need `pnpm infra:up` (postgres, redis, minio).
+- Fresh databases contain no categories or document types (CMS data, admin screens arrive in Phase 10), so drivers see no categories until rows exist. Tests create them by SQL.
 - Per-IP limits use `req.ip`; set `TRUST_PROXY_HOPS` to the real number of reverse proxies in front
   of the API (0 = none) or every client will appear to share the proxy's address.

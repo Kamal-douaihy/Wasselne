@@ -8,10 +8,14 @@ import { RateLimitModule } from "./common/rate-limit.module";
 import { HttpExceptionFilter } from "./common/http-exception.filter";
 import { IpRateLimitGuard } from "./common/ip-rate-limit.guard";
 import { HealthModule } from "./modules/health/health.module";
+import { AdminModule } from "./modules/admin/admin.module";
+import { DriversModule } from "./modules/drivers/drivers.module";
 import { IdentityModule } from "./modules/identity/identity.module";
+import { StorageModule } from "./modules/storage/storage.module";
+import { UploadsModule } from "./modules/uploads/uploads.module";
 
 @Module({
-  imports: [EnvModule, LoggerModule, DbModule, RedisModule, RateLimitModule, HealthModule, IdentityModule],
+  imports: [EnvModule, LoggerModule, DbModule, RedisModule, RateLimitModule, HealthModule, StorageModule, IdentityModule, UploadsModule, DriversModule, AdminModule],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_GUARD, useClass: IpRateLimitGuard },

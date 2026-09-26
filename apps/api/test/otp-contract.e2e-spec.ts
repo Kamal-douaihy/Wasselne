@@ -149,12 +149,12 @@ describe("OTP sign-in matches the OpenAPI contract", () => {
   });
 
   it("unknown routes and malformed JSON use the same Error shape", async () => {
-    const nf = await request(ctx.app.getHttpServer()).get("/v1/nope").set("X-Forwarded-For", freshIp());
+    const nf = await request(ctx.url).get("/v1/nope").set("X-Forwarded-For", freshIp());
     expect(nf.status).toBe(404);
     expect(nf.body.code).toBe("NOT_FOUND");
     expect(nf.body.correlation_id).toBe(nf.headers["x-correlation-id"]);
 
-    const bad = await request(ctx.app.getHttpServer())
+    const bad = await request(ctx.url)
       .post("/v1/auth/otp/request")
       .set("X-Forwarded-For", freshIp())
       .set("Content-Type", "application/json")
@@ -165,7 +165,7 @@ describe("OTP sign-in matches the OpenAPI contract", () => {
   });
 
   it("health is reachable without /v1 and reports both dependencies", async () => {
-    const res = await request(ctx.app.getHttpServer()).get("/health");
+    const res = await request(ctx.url).get("/health");
     expect(res.body).toEqual({ status: "ok", checks: { database: "ok", redis: "ok" } });
   });
 });

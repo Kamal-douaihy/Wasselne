@@ -1,0 +1,13 @@
+
+> @wasselne/api@0.0.0 test:unit /Users/kamaldouaihy/Documents/Projects/Wasselne/apps/api
+> jest --runInBand
+
+PASS src/config/env.spec.ts
+PASS src/modules/identity/otp.util.spec.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       11 passed, 11 total
+Snapshots:   0 total
+Time:        1.05 s
+Ran all test suites.
+exit=0

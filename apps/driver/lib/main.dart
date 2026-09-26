@@ -3,7 +3,12 @@ import 'package:flutter_core/flutter_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const ProviderScope(child: WasselneDriverApp()));
+  runApp(
+    ProviderScope(
+      overrides: [appKindProvider.overrideWithValue('DRIVER')],
+      child: const WasselneDriverApp(),
+    ),
+  );
 }
 
 class WasselneDriverApp extends StatelessWidget {
@@ -18,10 +23,9 @@ class WasselneDriverApp extends StatelessWidget {
       darkTheme: WasselneTheme.dark(),
       localizationsDelegates: WasselneLocalizations.localizationsDelegates,
       supportedLocales: WasselneLocalizations.supportedLocales,
-      home: Builder(
-        builder: (context) => SystemStatusScreen(
-          title: WasselneLocalizations.of(context).appTitleDriver,
-        ),
+      home: SignInFlow(
+        signedIn: (context, profile) =>
+            DriverOnboardingScreen(profile: profile),
       ),
     );
   }

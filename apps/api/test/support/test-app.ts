@@ -11,6 +11,8 @@ import { assertMatchesContract } from "./openapi-contract";
 
 export interface TestContext {
   app: INestApplication;
+  /** http://127.0.0.1:<port> of the listening test server (see createTestContext). */
+  url: string;
   pool: Pool;
   redis: Redis;
   prefix: string;
@@ -32,7 +34,11 @@ export async function createTestContext(envOverrides: Record<string, string> = {
   process.env.TRUST_PROXY_HOPS ??= "1";
   const app = await NestFactory.create(AppModule, { logger: false });
   configureApp(app, loadEnv(process.env));
-  await app.init();
+  // Listen once on an ephemeral port. Handing supertest the bare http.Server makes it listen()
+  // and close() around EVERY request, and concurrent requests (the Promise.all concurrency tests)
+  // then close the server under each other, which surfaced as rare garbled/400 responses.
+  await app.listen(0, "127.0.0.1");
+  const address = app.getHttpServer().address() as { port: number };
   for (const [k, v] of Object.entries(saved)) {
     if (v === undefined) delete process.env[k];
     else process.env[k] = v;
@@ -42,6 +48,7 @@ export async function createTestContext(envOverrides: Record<string, string> = {
   const prefix = process.env.REDIS_KEY_PREFIX ?? "wsl:";
   return {
     app,
+    url: `http://127.0.0.1:${address.port}`,
     pool,
     redis,
     prefix,
@@ -64,15 +71,25 @@ export function randomPhone(): string {
   return `+9613${Math.floor(1_000_000 + Math.random() * 8_999_999)}`;
 }
 
+type Method = "get" | "post" | "patch" | "put" | "delete";
+export interface CallOpts {
+  body?: unknown;
+  token?: string;
+  ip?: string;
+  params?: Record<string, string>; // values for {placeholders} in the contract path
+  query?: Record<string, string | number | undefined>;
+  headers?: Record<string, string>;
+}
+
 /** Sends a request and asserts the response matches docs/phase-2/openapi.yaml. */
-export async function call(
-  ctx: TestContext,
-  method: "get" | "post",
-  path: string, // path as written in the contract, e.g. "/auth/otp/request"
-  opts: { body?: unknown; token?: string; ip?: string } = {},
-) {
-  let req = request(ctx.app.getHttpServer())[method](`/v1${path}`).set("X-Forwarded-For", opts.ip ?? freshIp());
+export async function call(ctx: TestContext, method: Method, path: string, opts: CallOpts = {}) {
+  // `path` is the contract path, e.g. "/admin/drivers/{id}/block"; params fill the placeholders.
+  const url = path.replace(/\{(\w+)\}/g, (_, k: string) => encodeURIComponent(opts.params?.[k] ?? `MISSING-${k}`));
+  let req = request(ctx.url)[method](`/v1${url}`).set("X-Forwarded-For", opts.ip ?? freshIp());
   if (opts.token) req = req.set("Authorization", `Bearer ${opts.token}`);
+  for (const [k, v] of Object.entries(opts.headers ?? {})) req = req.set(k, v);
+  const query = Object.fromEntries(Object.entries(opts.query ?? {}).filter(([, v]) => v !== undefined));
+  if (Object.keys(query).length > 0) req = req.query(query);
   const res = await (opts.body !== undefined ? req.send(opts.body as object) : req);
   assertMatchesContract(method, path, { status: res.status, headers: res.headers, body: res.body });
   return res;

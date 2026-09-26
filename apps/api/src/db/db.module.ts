@@ -1,9 +1,13 @@
 import { Global, Inject, Module, OnModuleDestroy } from "@nestjs/common";
 import { Kysely, PostgresDialect } from "kysely";
-import { Pool } from "pg";
+import { Pool, types } from "pg";
 import { ENV } from "../config/env.module";
 import { Env } from "../config/env";
 import { Database } from "./schema-types";
+
+// DATE columns (expires_on, due_on) are calendar dates, not instants: keep them as "YYYY-MM-DD"
+// strings instead of letting node-postgres turn them into a Date in the server's timezone.
+types.setTypeParser(1082, (v: string) => v);
 
 export const DB = Symbol("DB");
 export const PG_POOL = Symbol("PG_POOL");

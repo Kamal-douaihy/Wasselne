@@ -1,0 +1,172 @@
+◇ injected env (17) from .env
+PASS test/onboarding.e2e-spec.ts (6.689 s)
+  driver onboarding and eligibility
+    the application
+      ✓ options list only active categories with their required documents; rider tokens are refused (245 ms)
+      ✓ a fresh driver account starts in ONBOARDING with an empty checklist (67 ms)
+      ✓ walks the checklist step by step and refuses to submit while anything is missing (175 ms)
+      ✓ plates are normalised and unique among active vehicles, without revealing the owner (157 ms)
+      ✓ category selection enforces the vehicle type, seats, minimum year and women-only rule (117 ms)
+      ✓ documents: must be required, completed, owned, unexpired; vehicle docs bind to the current vehicle (245 ms)
+      ✓ replacing a document supersedes the old one; the same upload cannot be attached twice (192 ms)
+      ✓ a rider account that later signs in to the driver app can start an application (115 ms)
+      ✓ changing the declared gender voids a management confirmation (97 ms)
+    review and approval
+      ✓ approve: documents approved, driver approved, category approved, driver becomes eligible (218 ms)
+      ✓ request-changes returns the application to the driver, who fixes it and resubmits (186 ms)
+      ✓ reject: reason required, application closed, categories rejected, never eligible (142 ms)
+      ✓ women-only category: approval needs the driver's gender to be confirmed by management (D-35, D-39) (145 ms)
+      ✓ women-only: confirming the gender as MALE leaves the driver ineligible (139 ms)
+      ✓ the approval queue lists submitted applications oldest first, filterable, paginated (272 ms)
+      ✓ editing a category: approving requires the requirements; rejecting revokes eligibility (146 ms)
+    eligibility stays true only while the reasons stay clear
+      ✓ suspension removes eligibility; reinstatement restores it; only valid transitions are allowed (161 ms)
+      ✓ an expired document removes eligibility immediately, before any sweeper runs (147 ms)
+      ✓ the expiry sweep marks stored status EXPIRED and is idempotent (137 ms)
+      ✓ a document about to expire shows EXPIRING; renewing goes back to review and pauses eligibility until approved (163 ms)
+      ✓ rejecting an approved document removes eligibility without touching the driver's status (153 ms)
+      ✓ an overdue vehicle check blocks only after the grace period; a submitted check never blocks (D-40) (136 ms)
+      ✓ the grace period comes from the published platform settings (1348 ms)
+      ✓ a changed vehicle voids category approvals granted for the old one (219 ms)
+      ✓ an inactive category makes nobody eligible for it (140 ms)
+    offers cannot be created for ineligible drivers (database trigger)
+      ✓ accepts an offer for an eligible driver and refuses the same driver once suspended, blocked or unapproved (466 ms)
+      ✓ a driver approved for category A is not eligible for category B (313 ms)
+
+PASS test/admin.e2e-spec.ts (5.126 s)
+  admin console API
+    sign-in and MFA
+      ✓ first sign-in: password -> enrol (secret, QR URI, 10 recovery codes) -> confirm -> code -> session (196 ms)
+      ✓ a captured TOTP code cannot be replayed (31 ms)
+      ✓ wrong password, unknown email and deactivated account are indistinguishable 401s (63 ms)
+      ✓ failed sign-ins are rate limited per email and per IP (165 ms)
+      ✓ MFA guessing is locked out after the attempt cap, even with the right code afterwards (117 ms)
+      ✓ recovery codes work once each (48 ms)
+      ✓ token kinds are not interchangeable across the API (104 ms)
+      ✓ a session without completed MFA, an expired, a revoked one, and a deactivated admin are all refused (28 ms)
+      ✓ logout revokes the admin session server-side (16 ms)
+      ✓ the idle window slides forward with use (14 ms)
+    roles and permissions (matrix from docs/phase-1/03_Admin_Console.md §2)
+      ✓ SUPER_ADMIN: every route answers 403 or passes the permission check exactly as the matrix says (190 ms)
+      ✓ DRIVER_REVIEWER: every route answers 403 or passes the permission check exactly as the matrix says (106 ms)
+      ✓ OPERATIONS: every route answers 403 or passes the permission check exactly as the matrix says (91 ms)
+      ✓ PRICING: every route answers 403 or passes the permission check exactly as the matrix says (58 ms)
+      ✓ SUPPORT: every route answers 403 or passes the permission check exactly as the matrix says (55 ms)
+      ✓ SAFETY: every route answers 403 or passes the permission check exactly as the matrix says (54 ms)
+      ✓ FINANCE: every route answers 403 or passes the permission check exactly as the matrix says (85 ms)
+      ✓ CONTENT_EDITOR: every route answers 403 or passes the permission check exactly as the matrix says (64 ms)
+      ✓ AUDITOR: every route answers 403 or passes the permission check exactly as the matrix says (83 ms)
+      ✓ a denied request leaves no trace in the data it protects (155 ms)
+      ✓ role changes take effect on the next request (18 ms)
+      ✓ the audit log is readable only with audit.read (15 ms)
+    audit log
+      ✓ every driver decision records actor, roles, reason, before/after, ip and correlation id (167 ms)
+      ✓ rejected or invalid actions write no audit row (139 ms)
+      ✓ the action and its audit row commit together: if the audit insert fails the action is rolled back (166 ms)
+      ✓ audit rows cannot be edited or deleted, even by SQL (46 ms)
+      ✓ the audit-log endpoint filters, paginates and never shows a page twice (210 ms)
+    driver documents (private, audited)
+      ✓ a reviewer gets a short-lived signed URL to the real bytes; every open is audited; others get nothing (303 ms)
+      ✓ a driver cannot reach the admin download route or another driver's documents (182 ms)
+    blocks (D-34, D-41)
+      ✓ blocks and unblocks a rider: sessions revoked, sign-in refused with ACCOUNT_BLOCKED, then allowed again (196 ms)
+      ✓ a block during an active trip is queued: the rider keeps the session until the trip ends, then it applies (138 ms)
+      ✓ a driver with an open assignment is treated the same way (255 ms)
+      ✓ concurrent blocks of one account create exactly one block; unblock lifts it (105 ms)
+      ✓ blocking needs a reason and a real account of the right kind (90 ms)
+    concurrency of review decisions
+      ✓ three reviewers approving the same application at once: exactly one wins, one audit row (239 ms)
+      ✓ approve racing reject: one outcome, consistent state (188 ms)
+      ✓ a driver replacing a document while the reviewer decides on it never leaves two current documents (180 ms)
+    riders and drivers lists
+      ✓ list, search, paginate without skipping or repeating; detail shows gender confirmation state (224 ms)
+      ✓ gender confirmation for a rider needs a completed ride, a reason, and is audited (D-39) (131 ms)
+      ✓ drivers list shows status, plate, qualified categories and document status (196 ms)
+
+PASS test/sessions.e2e-spec.ts
+  sessions and profile
+    refresh token rotation
+      ✓ issues a new pair; the new access token works; the old refresh token is rejected (180 ms)
+      ✓ reuse of a rotated token revokes the whole session, including the newest tokens (112 ms)
+      ✓ an unknown or malformed refresh token is 401 / 400 (5 ms)
+      ✓ two parallel refreshes of one token: exactly one succeeds (109 ms)
+    logout and per-request session checks
+      ✓ logout revokes the session: access token and refresh token stop working (90 ms)
+      ✓ logout with another session's refresh token is refused and revokes nothing (121 ms)
+      ✓ logging out one device leaves the account's other session alive (123 ms)
+      ✓ a deleted account is refused at once, even with a valid unexpired token (104 ms)
+      ✓ an expired session row is refused even though the JWT has not expired (60 ms)
+      ✓ a block for one app does not lock the other app (162 ms)
+    app scoping
+      ✓ a rider token is refused on driver routes with NOT_AUTHORIZED (65 ms)
+      ✓ no token, garbage token, and a needs-profile token are all 401 on protected routes (3 ms)
+    PATCH /me
+      ✓ updates name, email, language and currency (72 ms)
+      ✓ rejects an unknown currency, a bad email and an empty name (67 ms)
+      ✓ cannot change gender or phone through PATCH (unknown keys are ignored) (60 ms)
+    legal documents
+      ✓ sign-up must accept the whole current set; unknown or superseded ids are refused (85 ms)
+      ✓ GET /legal/current serves the latest published version in the account language; accept is idempotent (140 ms)
+    push devices
+      ✓ registers, re-registers the same token to a new owner, and unregisters only your own (126 ms)
+      ✓ rejects an unknown platform (69 ms)
+
+PASS test/uploads.e2e-spec.ts
+  uploads
+    ✓ authorize -> PUT -> complete stores the object and records size and sha256 (220 ms)
+    ✓ complete is idempotent (78 ms)
+    ✓ the presigned URL is scoped to one key and one content type: a wrong Content-Type is refused by storage (65 ms)
+    ✓ the bucket is private: an unsigned GET of an uploaded object is refused (70 ms)
+    ✓ content that does not match its declared type is rejected and the object is deleted (105 ms)
+    ✓ a file larger than max_bytes is rejected on completion (75 ms)
+    ✓ completing before anything was uploaded is 422 and leaves the grant usable (83 ms)
+    ✓ an expired grant cannot be completed (97 ms)
+    ✓ abandoned grants are expired and their objects deleted by the cleanup job; completed uploads are untouched (87 ms)
+    ✓ another account cannot complete someone else's upload (404, and the upload is untouched) (121 ms)
+    ✓ authorize validates purpose, type and size (128 ms)
+    ✓ PDF documents are accepted by their %PDF header (81 ms)
+
+PASS test/otp-concurrency.e2e-spec.ts
+  OTP consumption is atomic and race-safe
+    ✓ 20 parallel verifies of one challenge (existing account): exactly one session, the rest 410 (332 ms)
+    ✓ 20 parallel verifies of one challenge (new number): exactly one NEEDS_PROFILE token, no account created (80 ms)
+    ✓ parallel wrong guesses never exceed the attempt limit, and a correct code after lock-out is refused (175 ms)
+    ✓ correct code racing wrong guesses: at most one success, attempts stay within the limit (93 ms)
+    ✓ parallel complete-profile with one token: exactly one account, one session, one 201 (107 ms)
+    ✓ a failure after consumption rolls the whole verify back (challenge stays redeemable, no session) (156 ms)
+    ✓ a failure inside complete-profile leaves no account behind (66 ms)
+
+PASS test/otp-contract.e2e-spec.ts
+  OTP sign-in matches the OpenAPI contract
+    ✓ request: 200 with exactly challenge_id, expires_at, resend_after (no code in the body) (93 ms)
+    ✓ request: validation failure is a flat Error body with correlation_id (2 ms)
+    ✓ new number: verify -> NEEDS_PROFILE, complete-profile -> 201, /me -> 200, next sign-in -> SESSION (157 ms)
+    ✓ wrong code: 400 OTP_INVALID; locked after the attempt limit: 429 OTP_RATE_LIMITED + Retry-After (158 ms)
+    ✓ used, expired and unknown challenges (152 ms)
+    ✓ bearer handling: missing/garbage/wrong-kind tokens are 401 NOT_AUTHENTICATED (62 ms)
+    ✓ complete-profile rejects an unknown legal version (400) and a reused token (401) (67 ms)
+    ✓ blocked and deleted accounts get 403 (205 ms)
+    ✓ unknown routes and malformed JSON use the same Error shape (2 ms)
+    ✓ health is reachable without /v1 and reports both dependencies (1 ms)
+
+PASS test/otp-rate-limits.e2e-spec.ts
+  per-IP and per-phone abuse controls (contract 429 shape)
+    OTP request limits
+      ✓ blocks the 4th request from one IP (any phone) with OTP_RATE_LIMITED + Retry-After, other IPs unaffected (163 ms)
+      ✓ blocks the 3rd request for one phone across different IPs (51 ms)
+    resend cooldown
+      ✓ a second code within the interval is 429 with Retry-After <= interval (83 ms)
+    OTP verify limit per IP
+      ✓ stops guessing across many challenges from one IP even though each challenge has attempts left (229 ms)
+    global per-IP ceiling
+      ✓ returns RATE_LIMITED + Retry-After once an IP exceeds the per-minute ceiling (8 ms)
+    no SMS provider configured
+      ✓ answers 503 PROVIDER_TEMPORARY_FAILURE and leaves no redeemable challenge (125 ms)
+
+Test Suites: 7 passed, 7 total
+Tests:       121 passed, 121 total
+Snapshots:   0 total
+Time:        18.374 s, estimated 19 s
+Ran all test suites.
+◇ injected env (0) from .env
+exit=0

@@ -4,6 +4,7 @@ const validBase = {
   DATABASE_URL: "postgres://user:pass@localhost:5432/db",
   REDIS_URL: "redis://localhost:6379",
   JWT_ACCESS_SECRET: "a".repeat(32),
+  ADMIN_TOTP_ENC_KEY: "ab".repeat(32),
 };
 
 describe("loadEnv", () => {
@@ -17,6 +18,10 @@ describe("loadEnv", () => {
   it("rejects a missing DATABASE_URL", () => {
     const { DATABASE_URL: _drop, ...rest } = validBase;
     expect(() => loadEnv(rest)).toThrow(/DATABASE_URL/);
+  });
+
+  it("rejects a malformed ADMIN_TOTP_ENC_KEY", () => {
+    expect(() => loadEnv({ ...validBase, ADMIN_TOTP_ENC_KEY: "short" })).toThrow(/ADMIN_TOTP_ENC_KEY/);
   });
 
   it("rejects a JWT secret shorter than 32 characters", () => {

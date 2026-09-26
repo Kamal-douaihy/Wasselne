@@ -1,12 +1,373 @@
 {
   "@@locale": "en",
   "appTitleRider": "Wasselne",
-  "@appTitleRider": { "description": "Rider app title" },
+  "@appTitleRider": {
+    "description": "Rider app title"
+  },
   "appTitleDriver": "Wasselne Driver",
-  "@appTitleDriver": { "description": "Driver app title" },
+  "@appTitleDriver": {
+    "description": "Driver app title"
+  },
   "systemStatus": "System status",
-  "@systemStatus": { "description": "Heading for the connectivity/health screen" },
+  "@systemStatus": {
+    "description": "Heading for the connectivity/health screen"
+  },
   "apiReachable": "API reachable",
   "apiUnreachable": "Could not reach the API",
-  "checking": "Checking…"
+  "checking": "Checking…",
+  "phoneTitle": "Sign in with your phone number",
+  "@phoneTitle": {
+    "description": "phoneTitle"
+  },
+  "phoneLabel": "Phone number",
+  "@phoneLabel": {
+    "description": "phoneLabel"
+  },
+  "phoneHelp": "Include the country code, for example +961…",
+  "@phoneHelp": {
+    "description": "phoneHelp"
+  },
+  "phoneInvalid": "Enter the number with its country code, digits only.",
+  "@phoneInvalid": {
+    "description": "phoneInvalid"
+  },
+  "sendCode": "Send code",
+  "@sendCode": {
+    "description": "sendCode"
+  },
+  "codeTitle": "Enter the code",
+  "@codeTitle": {
+    "description": "codeTitle"
+  },
+  "codeSent": "We sent a code to {phone}.",
+  "@codeSent": {
+    "description": "codeSent",
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "codeLabel": "Code",
+  "@codeLabel": {
+    "description": "codeLabel"
+  },
+  "verify": "Verify",
+  "@verify": {
+    "description": "verify"
+  },
+  "resendIn": "Send a new code in {seconds}s",
+  "@resendIn": {
+    "description": "resendIn",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "resendCode": "Send a new code",
+  "@resendCode": {
+    "description": "resendCode"
+  },
+  "changeNumber": "Use a different number",
+  "@changeNumber": {
+    "description": "changeNumber"
+  },
+  "profileTitle": "Create your profile",
+  "@profileTitle": {
+    "description": "profileTitle"
+  },
+  "firstName": "First name",
+  "@firstName": {
+    "description": "firstName"
+  },
+  "lastName": "Last name",
+  "@lastName": {
+    "description": "lastName"
+  },
+  "genderLabel": "Gender",
+  "@genderLabel": {
+    "description": "genderLabel"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "female"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "male"
+  },
+  "genderNote": "Used for women-only services. Our team may confirm it later.",
+  "@genderNote": {
+    "description": "genderNote"
+  },
+  "emailOptional": "Email (optional)",
+  "@emailOptional": {
+    "description": "emailOptional"
+  },
+  "continueLabel": "Continue",
+  "@continueLabel": {
+    "description": "continueLabel"
+  },
+  "termsTitle": "Terms and policies",
+  "@termsTitle": {
+    "description": "termsTitle"
+  },
+  "acceptTerms": "I accept: {title}",
+  "@acceptTerms": {
+    "description": "acceptTerms",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "signOut": "Sign out",
+  "@signOut": {
+    "description": "signOut"
+  },
+  "fieldRequired": "Required",
+  "@fieldRequired": {
+    "description": "fieldRequired"
+  },
+  "errorNetwork": "No connection. Check your internet and try again.",
+  "@errorNetwork": {
+    "description": "errorNetwork"
+  },
+  "errorOtpInvalid": "That code is not correct.",
+  "@errorOtpInvalid": {
+    "description": "errorOtpInvalid"
+  },
+  "errorOtpExpired": "That code has expired. Request a new one.",
+  "@errorOtpExpired": {
+    "description": "errorOtpExpired"
+  },
+  "errorRateLimited": "Too many attempts. Try again in {seconds}s.",
+  "@errorRateLimited": {
+    "description": "errorRateLimited",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "errorBlocked": "This account is blocked. Contact support.",
+  "@errorBlocked": {
+    "description": "errorBlocked"
+  },
+  "errorTerms": "Please accept the terms to continue.",
+  "@errorTerms": {
+    "description": "errorTerms"
+  },
+  "errorGeneric": "Something went wrong. Reference: {reference}",
+  "@errorGeneric": {
+    "description": "errorGeneric",
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "retry": "Try again",
+  "@retry": {
+    "description": "retry"
+  },
+  "loading": "Loading…",
+  "@loading": {
+    "description": "loading"
+  },
+  "riderHomeGreeting": "Hello, {name}",
+  "@riderHomeGreeting": {
+    "description": "riderHomeGreeting",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "riderHomeNote": "Ride booking is not available yet.",
+  "@riderHomeNote": {
+    "description": "riderHomeNote"
+  },
+  "onboardingTitle": "Become a driver",
+  "@onboardingTitle": {
+    "description": "onboardingTitle"
+  },
+  "stepProfile": "Personal details",
+  "@stepProfile": {
+    "description": "stepProfile"
+  },
+  "stepVehicle": "Vehicle",
+  "@stepVehicle": {
+    "description": "stepVehicle"
+  },
+  "stepCategories": "Ride categories",
+  "@stepCategories": {
+    "description": "stepCategories"
+  },
+  "stepDocuments": "Documents",
+  "@stepDocuments": {
+    "description": "stepDocuments"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "save"
+  },
+  "vehicleType": "Vehicle type",
+  "@vehicleType": {
+    "description": "vehicleType"
+  },
+  "typeCar": "Car",
+  "@typeCar": {
+    "description": "typeCar"
+  },
+  "typeMotorcycle": "Motorcycle",
+  "@typeMotorcycle": {
+    "description": "typeMotorcycle"
+  },
+  "typeTuktuk": "Tuk-tuk",
+  "@typeTuktuk": {
+    "description": "typeTuktuk"
+  },
+  "vehicleMake": "Make",
+  "@vehicleMake": {
+    "description": "vehicleMake"
+  },
+  "vehicleModel": "Model",
+  "@vehicleModel": {
+    "description": "vehicleModel"
+  },
+  "vehicleYear": "Year (optional)",
+  "@vehicleYear": {
+    "description": "vehicleYear"
+  },
+  "vehicleColor": "Colour",
+  "@vehicleColor": {
+    "description": "vehicleColor"
+  },
+  "vehiclePlate": "Plate number",
+  "@vehiclePlate": {
+    "description": "vehiclePlate"
+  },
+  "vehicleSeats": "Seats",
+  "@vehicleSeats": {
+    "description": "vehicleSeats"
+  },
+  "categoryWomenOnly": "Women drivers only",
+  "@categoryWomenOnly": {
+    "description": "categoryWomenOnly"
+  },
+  "errCatVehicleType": "Your vehicle type does not fit this category.",
+  "@errCatVehicleType": {
+    "description": "errCatVehicleType"
+  },
+  "errCatSeats": "Your vehicle has too few seats for this category.",
+  "@errCatSeats": {
+    "description": "errCatSeats"
+  },
+  "errCatYear": "Your vehicle is too old for this category.",
+  "@errCatYear": {
+    "description": "errCatYear"
+  },
+  "errCatWomenOnly": "This category is for women drivers only.",
+  "@errCatWomenOnly": {
+    "description": "errCatWomenOnly"
+  },
+  "uploadDocument": "Upload",
+  "@uploadDocument": {
+    "description": "uploadDocument"
+  },
+  "replaceDocument": "Replace",
+  "@replaceDocument": {
+    "description": "replaceDocument"
+  },
+  "takePhoto": "Take a photo",
+  "@takePhoto": {
+    "description": "takePhoto"
+  },
+  "chooseFromGallery": "Choose from gallery",
+  "@chooseFromGallery": {
+    "description": "chooseFromGallery"
+  },
+  "chooseExpiry": "Choose the expiry date",
+  "@chooseExpiry": {
+    "description": "chooseExpiry"
+  },
+  "docMissing": "Not uploaded",
+  "@docMissing": {
+    "description": "docMissing"
+  },
+  "docUploaded": "Uploaded, waiting for review",
+  "@docUploaded": {
+    "description": "docUploaded"
+  },
+  "docApproved": "Approved",
+  "@docApproved": {
+    "description": "docApproved"
+  },
+  "docNeedsChanges": "Please upload it again",
+  "@docNeedsChanges": {
+    "description": "docNeedsChanges"
+  },
+  "docRejected": "Rejected",
+  "@docRejected": {
+    "description": "docRejected"
+  },
+  "docExpired": "Expired",
+  "@docExpired": {
+    "description": "docExpired"
+  },
+  "submitApplication": "Submit for review",
+  "@submitApplication": {
+    "description": "submitApplication"
+  },
+  "statusOnboarding": "Complete the steps below, then submit your application.",
+  "@statusOnboarding": {
+    "description": "statusOnboarding"
+  },
+  "statusSubmitted": "Your application is being reviewed.",
+  "@statusSubmitted": {
+    "description": "statusSubmitted"
+  },
+  "statusNeedsChanges": "Changes are needed before we can continue.",
+  "@statusNeedsChanges": {
+    "description": "statusNeedsChanges"
+  },
+  "statusRejected": "Your application was not approved.",
+  "@statusRejected": {
+    "description": "statusRejected"
+  },
+  "statusApproved": "You are approved. Going online will be available in a later update.",
+  "@statusApproved": {
+    "description": "statusApproved"
+  },
+  "statusSuspended": "Your driver account is suspended.",
+  "@statusSuspended": {
+    "description": "statusSuspended"
+  },
+  "reasonLabel": "Reason: {reason}",
+  "@reasonLabel": {
+    "description": "reasonLabel",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "errorOnboardingIncomplete": "Complete every step before submitting.",
+  "@errorOnboardingIncomplete": {
+    "description": "errorOnboardingIncomplete"
+  },
+  "errorUploadInvalid": "That file could not be used. Try another photo.",
+  "@errorUploadInvalid": {
+    "description": "errorUploadInvalid"
+  },
+  "errorInvalidState": "The application cannot be changed right now.",
+  "@errorInvalidState": {
+    "description": "errorInvalidState"
+  },
+  "savedNotice": "Saved",
+  "@savedNotice": {
+    "description": "savedNotice"
+  }
 }

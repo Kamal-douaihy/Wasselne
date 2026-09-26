@@ -64,8 +64,11 @@ function dartConstName(path: string[]): string {
   return /^[0-9]/.test(name) ? `t${name}` : name;
 }
 
+// Descriptive prose tokens (e.g. motion.reduced-motion) contain ";" and would end the declaration
+// early, which PostCSS rejects; quote anything that cannot be a bare custom-property value.
 function toCssValue(v: Leaf): string {
-  return typeof v === "number" ? String(v) : v;
+  if (typeof v === "number") return String(v);
+  return /[;{}]/.test(v) ? JSON.stringify(v) : v;
 }
 
 // --- split into light palette / dark palette / everything else -----------------------------

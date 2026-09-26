@@ -1,0 +1,95 @@
+
+> wasselne@0.0.0 lint /Users/kamaldouaihy/Documents/Projects/Wasselne
+> corepack pnpm -r run lint
+
+Scope: 4 of 5 workspace projects
+apps/admin lint$ next lint
+apps/api lint$ eslint "src/**/*.ts"
+packages/contracts lint$ eslint "src/**/*.ts"
+packages/design-tokens lint$ eslint "src/**/*.ts"
+apps/admin lint: `next lint` is deprecated and will be removed in Next.js 16.
+apps/admin lint: For new projects, use create-next-app to choose your preferred linter.
+apps/admin lint: For existing projects, migrate to the ESLint CLI:
+apps/admin lint: npx @next/codemod@canary next-lint-to-eslint-cli .
+packages/contracts lint: Done
+packages/design-tokens lint: Done
+apps/admin lint: ✔ No ESLint warnings or errors
+apps/admin lint: Done
+apps/api lint: Done
+
+> wasselne@0.0.0 typecheck /Users/kamaldouaihy/Documents/Projects/Wasselne
+> corepack pnpm -r run typecheck
+
+Scope: 4 of 5 workspace projects
+apps/admin pretypecheck$ node scripts/copy-tokens.mjs
+apps/api typecheck$ tsc -p tsconfig.json --noEmit
+packages/contracts pretypecheck$ npm run generate
+packages/design-tokens typecheck$ tsc -p tsconfig.json --noEmit
+apps/admin pretypecheck: Done
+apps/admin typecheck$ tsc --noEmit
+packages/contracts pretypecheck: > @wasselne/contracts@0.0.0 generate
+packages/contracts pretypecheck: > openapi-typescript ../../docs/phase-2/openapi.yaml -o src/generated/openapi-types.ts
+packages/design-tokens typecheck: Done
+packages/contracts pretypecheck: ✨ openapi-typescript 7.13.0
+packages/contracts pretypecheck: 🚀 ../../docs/phase-2/openapi.yaml → src/generated/openapi-types.ts [143ms]
+packages/contracts pretypecheck: Done
+packages/contracts typecheck$ tsc -p tsconfig.json --noEmit
+packages/contracts typecheck: Done
+apps/api typecheck: Done
+apps/admin typecheck: Done
+
+> wasselne@0.0.0 build /Users/kamaldouaihy/Documents/Projects/Wasselne
+> corepack pnpm -r run build
+
+Scope: 4 of 5 workspace projects
+apps/api build$ tsc -p tsconfig.json
+apps/admin prebuild$ node scripts/copy-tokens.mjs
+packages/contracts prebuild$ npm run generate
+packages/design-tokens build$ npm run generate
+apps/admin prebuild: Done
+apps/admin build$ next build
+packages/contracts prebuild: > @wasselne/contracts@0.0.0 generate
+packages/contracts prebuild: > openapi-typescript ../../docs/phase-2/openapi.yaml -o src/generated/openapi-types.ts
+packages/design-tokens build: > @wasselne/design-tokens@0.0.0 generate
+packages/design-tokens build: > tsx src/generate.ts
+packages/design-tokens build: Wrote dist/tokens.css and ../flutter_core/lib/theme/tokens.g.dart
+packages/design-tokens build: Done
+packages/contracts prebuild: ✨ openapi-typescript 7.13.0
+apps/admin build:    ▲ Next.js 15.5.26
+apps/admin build:    Creating an optimized production build ...
+packages/contracts prebuild: 🚀 ../../docs/phase-2/openapi.yaml → src/generated/openapi-types.ts [168.8ms]
+packages/contracts prebuild: Done
+packages/contracts build$ tsc -p tsconfig.json
+packages/contracts build: Done
+apps/api build: Done
+apps/admin build:  ✓ Compiled successfully in 953ms
+apps/admin build:    Linting and checking validity of types ...
+apps/admin build:    Collecting page data ...
+apps/admin build:    Generating static pages (0/10) ...
+apps/admin build:    Generating static pages (2/10) 
+apps/admin build:    Generating static pages (4/10) 
+apps/admin build:    Generating static pages (7/10) 
+apps/admin build:  ✓ Generating static pages (10/10)
+apps/admin build:    Finalizing page optimization ...
+apps/admin build:    Collecting build traces ...
+apps/admin build: Route (app)                                 Size  First Load JS
+apps/admin build: ┌ ƒ /                                      131 B         102 kB
+apps/admin build: ├ ○ /_not-found                            994 B         103 kB
+apps/admin build: ├ ƒ /api/bff/[...path]                     131 B         102 kB
+apps/admin build: ├ ƒ /approvals                             165 B         106 kB
+apps/admin build: ├ ƒ /approvals/[id]                        123 B         109 kB
+apps/admin build: ├ ƒ /audit                                 165 B         106 kB
+apps/admin build: ├ ƒ /drivers                               594 B         106 kB
+apps/admin build: ├ ƒ /drivers/[id]                          124 B         109 kB
+apps/admin build: ├ ○ /login                               10.9 kB         113 kB
+apps/admin build: ├ ƒ /riders                                594 B         106 kB
+apps/admin build: ├ ƒ /riders/[id]                         2.27 kB         108 kB
+apps/admin build: └ ƒ /status                                131 B         102 kB
+apps/admin build: + First Load JS shared by all             102 kB
+apps/admin build:   ├ chunks/40d97ed0-52a70b5ad506cb9c.js  54.2 kB
+apps/admin build:   ├ chunks/427-f9cdf6ba96f94ffa.js       46.1 kB
+apps/admin build:   └ other shared chunks (total)          1.92 kB
+apps/admin build: ○  (Static)   prerendered as static content
+apps/admin build: ƒ  (Dynamic)  server-rendered on demand
+apps/admin build: Done
+exit=0

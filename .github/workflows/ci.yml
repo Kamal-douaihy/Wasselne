@@ -29,12 +29,28 @@ jobs:
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 5s --health-timeout 5s --health-retries 10
+      minio:
+        # bitnamilegacy is the free mirror the local docker-compose also uses (revisit before production)
+        image: bitnamilegacy/minio:latest
+        env:
+          MINIO_ROOT_USER: wasselne
+          MINIO_ROOT_PASSWORD: wasselne_ci_key
+          MINIO_DEFAULT_BUCKETS: wasselne-ci
+        ports: ["9000:9000"]
+        options: >-
+          --health-cmd "curl -f http://localhost:9000/minio/health/live"
+          --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       NODE_ENV: test
       DATABASE_URL: postgres://wasselne:wasselne_ci@localhost:5432/wasselne
       REDIS_URL: redis://localhost:6379
       JWT_ACCESS_SECRET: ci-only-access-secret-not-for-real-use-000000
       SMS_ADAPTER: dev
+      S3_ENDPOINT: http://localhost:9000
+      S3_BUCKET: wasselne-ci
+      S3_ACCESS_KEY: wasselne
+      S3_SECRET_KEY: wasselne_ci_key
+      ADMIN_TOTP_ENC_KEY: 00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff  # CI-only value
     steps:
       - uses: actions/checkout@v4
 
@@ -108,3 +124,70 @@ jobs:
       - run: melos run analyze
       - run: melos run test
       - run: melos run format-check
+
+  live-clients:
+    name: Admin console (Chromium) and Dart client against the real stack
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: wasselne
+          POSTGRES_PASSWORD: wasselne_ci
+          POSTGRES_DB: wasselne
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U wasselne"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      minio:
+        # bitnamilegacy is the free mirror the local docker-compose also uses (revisit before production)
+        image: bitnamilegacy/minio:latest
+        env:
+          MINIO_ROOT_USER: wasselne
+          MINIO_ROOT_PASSWORD: wasselne_ci_key
+          MINIO_DEFAULT_BUCKETS: wasselne-ci
+        ports: ["9000:9000"]
+        options: >-
+          --health-cmd "curl -f http://localhost:9000/minio/health/live"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgres://wasselne:wasselne_ci@localhost:5432/wasselne
+      REDIS_URL: redis://localhost:6379
+      JWT_ACCESS_SECRET: ci-only-access-secret-not-for-real-use-000000
+      SMS_ADAPTER: dev
+      S3_ENDPOINT: http://localhost:9000
+      S3_BUCKET: wasselne-ci
+      S3_ACCESS_KEY: wasselne
+      S3_SECRET_KEY: wasselne_ci_key
+      ADMIN_TOTP_ENC_KEY: 00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff  # CI-only value
+      E2E_REDIS_CLI: redis-cli
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - run: |
+          corepack pnpm --filter @wasselne/contracts run generate
+          corepack pnpm --filter @wasselne/design-tokens run generate
+      - run: sudo apt-get update && sudo apt-get install -y redis-tools
+      - run: corepack pnpm --filter @wasselne/admin exec playwright install --with-deps chromium
+      - run: corepack pnpm --filter @wasselne/admin run build
+      - name: Admin console in a real browser
+        run: corepack pnpm --filter @wasselne/api run e2e:admin-console
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: dart format packages/flutter_core/lib/theme/tokens.g.dart
+      - name: Dart ApiClient against the real API
+        run: |
+          (cd packages/flutter_core && flutter pub get)
+          corepack pnpm --filter @wasselne/api run e2e:dart-client

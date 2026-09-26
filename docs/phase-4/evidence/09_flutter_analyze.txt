@@ -1,0 +1,9 @@
+=== analyze packages/flutter_core
+Analyzing flutter_core...                                       
+No issues found! (ran in 1.8s)
+=== analyze apps/rider
+Analyzing rider...                                              
+No issues found! (ran in 1.5s)
+=== analyze apps/driver
+Analyzing driver...                                             
+No issues found! (ran in 1.5s)

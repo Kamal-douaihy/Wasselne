@@ -1,0 +1,122 @@
+=== test packages/flutter_core
+Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+Downloading packages...
+  cross_file 0.3.5+5 (0.4.0 available)
+  flutter_riverpod 2.6.1 (3.4.3 available)
+  flutter_secure_storage 9.2.4 (11.2.0 available)
+  flutter_secure_storage_linux 1.2.3 (3.0.3 available)
+  flutter_secure_storage_macos 3.1.3 (4.0.0 available)
+  flutter_secure_storage_platform_interface 1.1.2 (2.1.1 available)
+  flutter_secure_storage_web 1.2.1 (2.1.1 available)
+  flutter_secure_storage_windows 3.1.2 (4.2.2 available)
+  go_router 14.8.1 (18.0.1 available)
+  js 0.6.7 (0.7.2 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  platform 3.1.6 (3.2.0 available)
+  riverpod 2.6.1 (3.4.3 available)
+  test_api 0.7.12 (0.7.14 available)
+  win32 5.15.0 (6.4.0 available)
+Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+15 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/flutter_core_test.dart
+00:00 +0: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +1: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +3: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +4: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +5: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +6: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +7: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +8: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +9: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +10: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +11: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +12: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +13: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +14: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +15: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +16: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +17: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +17: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/live_api_test.dart: sign in, complete the driver application and sign out against the real API
+  Skip: set WASSELNE_LIVE_API (see e2e:dart-client)
+00:00 +17 ~1: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +17 ~1: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/live_api_test.dart: a real refresh rotation, and reuse of the old token kills the session
+  Skip: set WASSELNE_LIVE_API (see e2e:dart-client)
+00:00 +17 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +18 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:00 +19 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:01 +20 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:01 +21 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:01 +22 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:01 +23 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:01 +24 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:01 +25 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a new driver completes every step, uploads both documents and submits
+00:01 +26 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/auth_flow_test.dart: the profile step needs a gender before it submits
+00:01 +27 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a women-only category is labelled, and the server's refusal is explained
+00:01 +28 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a women-only category is labelled, and the server's refusal is explained
+00:01 +29 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/auth_flow_test.dart: a revoked stored session drops back to sign-in and clears the token
+00:01 +30 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a file that is not an accepted image is refused before anything is uploaded
+00:01 +31 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a file that is not an accepted image is refused before anything is uploaded
+00:01 +32 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a file that is not an accepted image is refused before anything is uploaded
+00:01 +33 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: cancelling the picker changes nothing
+00:01 +34 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a storage failure is reported and no document is attached
+00:01 +35 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: submitting early shows the server's incomplete message (the button is not the only guard)
+00:01 +36 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: NEEDS_CHANGES shows the reviewer's reason and lets the driver replace the document
+00:01 +37 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: SUBMITTED: shows the status, never claims more, and offers no edit or submit
+00:01 +38 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: REJECTED: shows the status, never claims more, and offers no edit or submit
+00:01 +39 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: APPROVED: shows the status, never claims more, and offers no edit or submit
+00:01 +40 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: SUSPENDED: shows the status, never claims more, and offers no edit or submit
+00:01 +41 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: the screen renders in Arabic (right-to-left) and French
+00:01 +42 ~2: /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/flutter_core/test/onboarding_flow_test.dart: a network failure while loading offers a retry
+00:01 +43 ~2: All tests passed!
+=== test apps/rider
+Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+Downloading packages...
+  cross_file 0.3.5+5 (0.4.0 available)
+  flutter_riverpod 2.6.1 (3.4.3 available)
+  flutter_secure_storage 9.2.4 (11.2.0 available)
+  flutter_secure_storage_linux 1.2.3 (3.0.3 available)
+  flutter_secure_storage_macos 3.1.3 (4.0.0 available)
+  flutter_secure_storage_platform_interface 1.1.2 (2.1.1 available)
+  flutter_secure_storage_web 1.2.1 (2.1.1 available)
+  flutter_secure_storage_windows 3.1.2 (4.2.2 available)
+  go_router 14.8.1 (18.0.1 available)
+  js 0.6.7 (0.7.2 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  platform 3.1.6 (3.2.0 available)
+  riverpod 2.6.1 (3.4.3 available)
+  test_api 0.7.12 (0.7.14 available)
+  win32 5.15.0 (6.4.0 available)
+Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+15 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/kamaldouaihy/Documents/Projects/Wasselne/apps/rider/test/widget_test.dart
+00:00 +0: starts at phone sign-in when there is no session
+00:00 +1: a stored session opens the rider home and says booking is not available yet
+00:00 +2: All tests passed!
+=== test apps/driver
+Resolving dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`...
+Downloading packages...
+  cross_file 0.3.5+5 (0.4.0 available)
+  flutter_riverpod 2.6.1 (3.4.3 available)
+  flutter_secure_storage 9.2.4 (11.2.0 available)
+  flutter_secure_storage_linux 1.2.3 (3.0.3 available)
+  flutter_secure_storage_macos 3.1.3 (4.0.0 available)
+  flutter_secure_storage_platform_interface 1.1.2 (2.1.1 available)
+  flutter_secure_storage_web 1.2.1 (2.1.1 available)
+  flutter_secure_storage_windows 3.1.2 (4.2.2 available)
+  go_router 14.8.1 (18.0.1 available)
+  js 0.6.7 (0.7.2 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  platform 3.1.6 (3.2.0 available)
+  riverpod 2.6.1 (3.4.3 available)
+  test_api 0.7.12 (0.7.14 available)
+  win32 5.15.0 (6.4.0 available)
+Got dependencies in `/Users/kamaldouaihy/Documents/Projects/Wasselne`!
+15 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/kamaldouaihy/Documents/Projects/Wasselne/apps/driver/test/widget_test.dart
+00:00 +0: starts at phone sign-in when there is no session
+00:00 +1: a stored session opens the driver application
+00:00 +2: All tests passed!

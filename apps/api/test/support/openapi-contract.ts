@@ -58,7 +58,11 @@ export function assertMatchesContract(method: string, path: string, res: Contrac
 
   const schema = response.content?.["application/json"]?.schema;
   if (schema) {
-    const validate = ajv.compile({ $ref: "openapi#" + schema.$ref.slice(1) });
+    // Inline schemas (e.g. `type: array, items: {$ref}`) are compiled against a root that carries
+    // the components, so their internal #/components/... refs resolve.
+    const validate = schema.$ref
+      ? ajv.compile({ $ref: "openapi#" + schema.$ref.slice(1) })
+      : ajv.compile({ ...schema, components: spec.components });
     if (!validate(res.body)) {
       throw new Error(
         `Contract violation: ${method} ${path} ${res.status} body does not match ${schema.$ref}: ${ajv.errorsText(validate.errors)}. Body: ${JSON.stringify(res.body)}`,

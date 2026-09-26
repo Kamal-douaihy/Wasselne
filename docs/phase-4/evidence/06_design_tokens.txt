@@ -1,0 +1,16 @@
+
+> @wasselne/design-tokens@0.0.0 test /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/design-tokens
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/kamaldouaihy/Documents/Projects/Wasselne/packages/design-tokens
+
+ ✓ src/generate.spec.ts (2 tests) 214ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  08:03:34
+   Duration  421ms (transform 33ms, setup 0ms, collect 12ms, tests 214ms, environment 0ms, prepare 42ms)
+
+exit=0
